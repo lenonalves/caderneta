@@ -41,6 +41,19 @@ body{
 h1,h2,h3,.display{font-family:"Baloo 2",cursive;font-weight:800;letter-spacing:.1px;margin:0;line-height:1.15}
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{cursor:pointer;border:none;background:none;padding:0}
+/* O Chrome pinta um retângulo azul em tudo que é clicável no celular, e
+   segurar o dedo seleciona o texto de dentro. Como quase toda a tela é
+   botão, isso aparecia o tempo todo. Os campos de texto ficam de fora:
+   lá a seleção tem que continuar funcionando. */
+button, .aba, .carteirinha, .card.link, .filtro, .hora, .atalho, .receita, .mais, .eu, a{
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+}
+button, .aba, .carteirinha, .card.link, .filtro, .hora, .atalho, .receita{
+  -webkit-user-select:none;
+  user-select:none;
+}
+input, textarea, select{-webkit-user-select:auto;user-select:auto}
 svg{display:block}
 
 .wrap{max-width:520px;margin:0 auto;padding:0 16px}
