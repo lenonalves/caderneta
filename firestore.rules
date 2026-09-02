@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// Firebase Console → Firestore Database → Regras → cole isto → Publicar.
+//
+// Pegue os UID em Authentication → Users. Enquanto houver só um,
+// deixe só um na lista. Ao adicionar o segundo, não esqueça a
+// vírgula depois do primeiro.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function somosNos() {
+      return request.auth != null && request.auth.uid in [
+        'ldPv9ooTcOehxbY3HL3v8McgI0N2'
+      ];
+    }
+
+    match /familias/{familia} {
+
+      // O perfil da criança fica no próprio documento da família.
+      allow read, write: if somosNos();
+
+      // Cada pessoa só edita o próprio cadastro, mas as duas se veem.
+      match /membros/{uid} {
+        allow read:  if somosNos();
+        allow write: if somosNos() && request.auth.uid == uid;
+      }
+
+      match /consultas/{doc} { allow read, write: if somosNos(); }
+      match /remedios/{doc}  { allow read, write: if somosNos(); }
+      match /eventos/{doc}   { allow read, write: if somosNos(); }
+      match /doses/{doc}     { allow read, write: if somosNos(); }
+
+      // Endereço de push de cada aparelho. Só vocês dois escrevem.
+      match /dispositivos/{doc} { allow read, write: if somosNos(); }
+
+      // "enviados" é a memória do carteiro, pra não repetir aviso.
+      // Ninguém do app precisa dela: o worker usa credencial de
+      // servidor, que passa por fora das regras.
+
+      // Sem regra curinga aqui de propósito: se um dia a gente criar
+      // uma coleção nova (anexos, vacinas), ela precisa ser liberada
+      // aqui explicitamente. Assim nada nasce aberto por descuido.
+    }
+  }
+}

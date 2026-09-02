@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caderneta da Bia</title>
+<meta name="theme-color" content="#FDF7FA">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#FDF7FA;
+  --nuvem:#FFFFFF;
+  --tinta:#463451;
+  --tinta2:#8B7B95;
+  --tinta3:#B6A9BE;
+  --linha:#EFE3EC;
+  --menta:#5FC9A8;
+  --pessego:#FF7E68;
+  --lavanda:#A08FE6;
+  --sol:#FFC94A;
+  --ceu:#6FBBEE;
+  --uva:#E6A2D6;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:"Nunito",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(100px + env(safe-area-inset-bottom));
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:"Baloo 2",cursive;font-weight:800;letter-spacing:.1px;margin:0;line-height:1.15}
+button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
+button{cursor:pointer;border:none;background:none;padding:0}
+svg{display:block}
+
+.wrap{max-width:520px;margin:0 auto;padding:0 16px}
+.tela{display:none}
+.tela.on{display:block;animation:entra .3s cubic-bezier(.2,1.2,.4,1)}
+@keyframes entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- cabeçalho ---------- */
+.topo{display:flex;align-items:center;justify-content:space-between;padding:18px 2px 4px}
+.marca{height:34px;width:auto}
+.eu{
+  width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
+  font-family:"Baloo 2";font-weight:800;font-size:15px;color:#fff;background:var(--lavanda);
+  box-shadow:0 3px 0 #8878CE
+}
+.saudacao h1{font-size:27px}
+.saudacao p{margin:3px 0 0;color:var(--tinta2);font-size:14px;font-weight:600;text-transform:lowercase}
+
+.titulo-tela{font-size:27px;margin:22px 2px 16px}
+
+/* ---------- carteirinha (elemento assinatura) ---------- */
+.carteirinha{
+  position:relative;width:100%;text-align:left;background:var(--nuvem);
+  border-radius:26px 26px 10px 10px;padding:18px 18px 24px;
+  box-shadow:0 10px 0 -2px rgba(160,143,230,.16), 0 20px 34px -20px rgba(70,52,81,.5);
+  transition:transform .16s
+}
+.carteirinha:active{transform:scale(.985)}
+.carteirinha::after{
+  content:"";position:absolute;left:0;right:0;bottom:-9px;height:10px;
+  background:radial-gradient(circle at 6px -1px, transparent 6px, var(--nuvem) 6.5px) repeat-x;
+  background-size:12px 12px
+}
+.selo{
+  position:absolute;top:-13px;right:18px;background:var(--sol);color:#5A4212;
+  font-family:"Baloo 2";font-weight:800;font-size:11.5px;padding:5px 12px;border-radius:999px;
+  transform:rotate(5deg);box-shadow:0 3px 0 rgba(0,0,0,.07)
+}
+.cart-topo{display:flex;gap:14px;align-items:center}
+.avatar{
+  width:66px;height:66px;flex:0 0 66px;border-radius:23px;display:grid;place-items:center;
+  font-size:35px;background:linear-gradient(160deg,#FFE9F3,#EAE2FF);
+  box-shadow:inset 0 -3px 0 rgba(70,52,81,.05);
+  animation:pula 3s ease-in-out infinite
+}
+@keyframes pula{0%,100%{transform:translateY(0)}32%{transform:translateY(-4px) scale(1.04)}62%{transform:translateY(0) scale(.98)}}
+.cart-nome{font-size:24px}
+.cart-idade{color:var(--tinta2);font-size:13.5px;font-weight:700;margin-top:3px}
+.picotado{border:none;border-top:2px dashed var(--linha);margin:15px 0 13px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#F4EEFA;color:#6B5C77;white-space:nowrap}
+.chip.alerta{background:#FFE7E2;color:#B4463A}
+.chip.sangue{background:#FFF1CE;color:#7A5B12}
+.chip.plano{background:#E3F4EE;color:#2F7460}
+
+
+/* ---------- cabeçalho colorido ---------- */
+.hero{
+  margin:0 -16px;padding:16px 22px 96px;
+  background:linear-gradient(158deg,#A78BEA 0%,#C79AE0 48%,#F0A9B8 100%);
+  border-radius:0 0 36px 36px;color:#fff;position:relative;overflow:hidden
+}
+.hero::after{
+  content:"";position:absolute;right:-56px;top:-70px;width:190px;height:190px;
+  border-radius:50%;background:rgba(255,255,255,.10)
+}
+.hero .topo{padding:4px 0 0;position:relative;z-index:1}
+.hero .marca{height:32px}
+.hero .saudacao{margin:20px 0 0;position:relative;z-index:1}
+.hero .saudacao h1{font-size:28px;color:#fff}
+.hero .saudacao p{color:rgba(255,255,255,.85);margin-top:4px}
+.eu{background:rgba(255,255,255,.24);box-shadow:none;color:#fff}
+.carteirinha{margin-top:-78px;position:relative;z-index:2}
+
+/* ---------- atalhos ---------- */
+.atalhos{display:flex;gap:9px;margin:22px 0 0}
+.atalho{
+  flex:1;background:var(--nuvem);border-radius:18px;padding:13px 8px 11px;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  font-size:11.5px;font-weight:700;color:var(--tinta2);
+  box-shadow:0 3px 0 -1px rgba(70,52,81,.05);transition:transform .15s
+}
+.atalho:active{transform:scale(.95)}
+.atalho svg{width:22px;height:22px}
+.ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic.mini{width:15px;height:15px;stroke-width:2}
+
+/* ---------- vazio, mais discreto ---------- */
+.vazio{text-align:center;padding:26px 20px;color:var(--tinta2);background:var(--nuvem);border-radius:22px;border:1.5px dashed var(--linha)}
+.vazio .ilustra{width:44px;height:44px;margin:0 auto 12px;color:var(--tinta3)}
+.vazio .ilustra svg{width:44px;height:44px;stroke-width:1.5}
+.vazio p{margin:0 0 14px;font-size:14px;line-height:1.5;max-width:34ch;margin-inline:auto}
+.vazio .btn{width:auto;padding:11px 20px;font-size:14.5px}
+
+/* ---------- blocos ---------- */
+.bloco{margin:28px 0 0}
+.bloco-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 4px 11px}
+.bloco-cab h2{font-size:18.5px}
+.bloco-cab .acao{font-size:13px;font-weight:700;color:var(--lavanda)}
+
+.card{
+  background:var(--nuvem);border-radius:22px;padding:15px;margin-bottom:10px;
+  box-shadow:0 3px 0 -1px rgba(70,52,81,.045), 0 12px 20px -16px rgba(70,52,81,.55)
+}
+.card.link{width:100%;text-align:left;display:block;transition:transform .15s}
+.card.link:active{transform:scale(.978)}
+.card h3{font-size:16.5px}
+.card .sub{color:var(--tinta2);font-size:13.5px;font-weight:600;margin-top:3px}
+.card .corpo{font-size:14.5px;line-height:1.55;margin-top:10px;white-space:pre-wrap}
+.linha-topo{display:flex;gap:12px;align-items:flex-start}
+.bolinha{width:40px;height:40px;flex:0 0 40px;border-radius:14px;display:grid;place-items:center}
+.bolinha svg{width:21px;height:21px}
+
+
+/* ---------- anel de doses ---------- */
+.anel{width:42px;height:42px}
+.anel circle{fill:none;stroke-width:5;stroke-linecap:round}
+.anel .trilha{stroke:var(--linha)}
+.anel .feito{stroke:var(--menta);transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .5s cubic-bezier(.3,1.2,.4,1)}
+.anel text{font-family:"Baloo 2";font-weight:800;font-size:14px;fill:var(--tinta)}
+
+.dose{display:flex;align-items:center;gap:13px;background:var(--nuvem);border-radius:19px;padding:12px 14px;margin-bottom:9px;box-shadow:0 3px 0 -1px rgba(70,52,81,.045);transition:opacity .3s}
+.dose.feita{opacity:.5}
+.dose.feita .dose-nome{text-decoration:line-through}
+.dose-hora{font-family:"Baloo 2";font-weight:800;font-size:17px;min-width:50px}
+.dose-nome{font-weight:700;font-size:15px}
+.dose-sub{font-size:12.5px;color:var(--tinta2);font-weight:600;margin-top:1px}
+.marca{margin-left:auto;width:38px;height:38px;flex:0 0 38px;border-radius:50%;border:2.5px solid var(--linha);display:grid;place-items:center;font-size:17px;color:#fff;transition:transform .2s cubic-bezier(.2,1.6,.5,1),background .2s,border-color .2s}
+.dose.feita .marca{background:var(--menta);border-color:var(--menta);transform:scale(1.06)}
+.marca:active{transform:scale(.86)}
+
+/* ---------- filtros ---------- */
+.filtros{display:flex;gap:8px;overflow-x:auto;padding:2px 4px 14px;scrollbar-width:none}
+.filtros::-webkit-scrollbar{display:none}
+.filtro{border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:700;background:var(--nuvem);color:var(--tinta2);white-space:nowrap;box-shadow:0 3px 0 -1px rgba(70,52,81,.055);transition:transform .15s}
+.filtro[aria-pressed="true"]{background:var(--tinta);color:#fff}
+.filtro:active{transform:scale(.94)}
+
+/* ---------- botões ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:16px;padding:13px 20px;border-radius:17px;background:var(--lavanda);color:#fff;box-shadow:0 5px 0 #8878CE;transition:transform .11s,box-shadow .11s;width:100%}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8878CE}
+.btn:disabled{opacity:.55}
+.btn.claro{background:var(--nuvem);color:var(--tinta);box-shadow:0 5px 0 var(--linha)}
+.btn.claro:active{box-shadow:0 1px 0 var(--linha)}
+.btn.perigo{background:#FFE7E2;color:#B4463A;box-shadow:0 5px 0 #F5CFC7}
+.btn.perigo:active{box-shadow:0 1px 0 #F5CFC7}
+.btn-linha{display:flex;gap:10px;margin-top:11px}
+
+/* ---------- barra de abas ---------- */
+.abas{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:rgba(253,247,250,.94);backdrop-filter:blur(16px);
+  border-top:1px solid var(--linha);
+  padding:9px 6px calc(9px + env(safe-area-inset-bottom));
+  display:flex;justify-content:space-around
+}
+.aba{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--tinta3)}
+.aba svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s cubic-bezier(.2,1.7,.5,1)}
+.aba[aria-current="true"]{color:var(--tinta)}
+.aba[aria-current="true"] svg{transform:translateY(-2px) scale(1.1);stroke-width:2.2}
+.aba[aria-current="true"]::before{content:"";position:absolute;top:-3px;width:46px;height:34px;border-radius:12px;background:#F1E9FA;z-index:-1;animation:brota .28s cubic-bezier(.2,1.6,.5,1)}
+@keyframes brota{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ---------- botão flutuante ---------- */
+.mais{
+  position:fixed;right:18px;bottom:calc(94px + env(safe-area-inset-bottom));z-index:45;
+  width:58px;height:58px;border-radius:21px;background:var(--pessego);color:#fff;
+  display:grid;place-items:center;
+  box-shadow:0 6px 0 #E0644E, 0 16px 24px -12px rgba(224,100,78,.85);
+  transition:transform .11s,box-shadow .11s
+}
+.mais svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.mais:active{transform:translateY(5px) scale(.96);box-shadow:0 1px 0 #E0644E}
+
+/* ---------- folha ---------- */
+.fundo{position:fixed;inset:0;background:rgba(70,52,81,.45);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s}
+.fundo.on{opacity:1;pointer-events:auto}
+.folha{position:fixed;left:0;right:0;bottom:0;z-index:51;background:var(--papel);border-radius:28px 28px 0 0;max-height:92vh;overflow-y:auto;padding:10px 18px calc(28px + env(safe-area-inset-bottom));transform:translateY(102%);transition:transform .36s cubic-bezier(.2,1.1,.4,1)}
+.folha.on{transform:none}
+.puxador{width:44px;height:5px;border-radius:99px;background:var(--linha);margin:4px auto 16px}
+.folha h2{font-size:22px;margin-bottom:6px}
+label{display:block;margin:14px 0 5px;font-size:13px;font-weight:700;color:var(--tinta2)}
+input,select,textarea{width:100%;background:var(--nuvem);border:2px solid var(--linha);border-radius:15px;padding:12px 14px;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--lavanda)}
+input:disabled{background:#F6F0F4;color:var(--tinta2)}
+textarea{min-height:90px;resize:vertical;line-height:1.55}
+.grade-horas{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:7px;margin-top:6px}
+.hora{
+  padding:10px 4px;border-radius:13px;background:var(--nuvem);border:2px solid var(--linha);
+  font-weight:700;font-size:14px;color:var(--tinta2);transition:transform .12s
+}
+.hora:active{transform:scale(.93)}
+.hora.on{background:var(--lavanda);border-color:var(--lavanda);color:#fff}
+.receitas{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.receita{padding:8px 13px;border-radius:999px;background:#F1E9FA;color:#6B5C77;font-size:13px;font-weight:700}
+.receita:active{transform:scale(.94)}
+.resumo-horas{font-size:13.5px;font-weight:700;color:var(--tinta);margin-top:12px;min-height:20px}
+.dupla{display:flex;gap:10px}
+.dupla>div{flex:1}
+.dica{font-size:12.5px;color:var(--tinta2);margin:6px 2px 0;line-height:1.45}
+
+/* ---------- porta: login, carregando, erro ---------- */
+.porta{position:fixed;inset:0;z-index:80;background:var(--papel);display:grid;place-items:center;padding:24px}
+.porta[hidden]{display:none}
+.porta-caixa{width:100%;max-width:340px;text-align:center}
+.porta .marca-grande{width:150px;margin:0 auto 6px}
+.porta p{color:var(--tinta2);font-size:14.5px;margin:0 0 24px;line-height:1.5}
+.porta input{text-align:center;margin-bottom:10px}
+.porta-erro{color:#B4463A;font-size:13.5px;font-weight:700;min-height:22px;margin-top:12px;line-height:1.4}
+.girando{width:42px;height:42px;border-radius:50%;border:4px solid var(--linha);border-top-color:var(--lavanda);animation:gira .8s linear infinite;margin:0 auto}
+@keyframes gira{to{transform:rotate(360deg)}}
+.porta h1{font-size:26px;margin-bottom:6px}
+
+
+/* ---------- avisos ---------- */
+#offline{position:fixed;top:0;left:0;right:0;z-index:60;background:var(--sol);color:#5A4212;text-align:center;font-size:12.5px;font-weight:700;padding:6px;transform:translateY(-100%);transition:transform .3s}
+#offline.on{transform:none}
+#toast{position:fixed;left:50%;bottom:calc(116px + env(safe-area-inset-bottom));transform:translate(-50%,18px);background:var(--tinta);color:#fff;padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;z-index:70;opacity:0;pointer-events:none;transition:.28s cubic-bezier(.2,1.4,.5,1);max-width:86vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.faisca{position:fixed;z-index:69;pointer-events:none;font-size:19px;animation:sobe-some 1.05s ease-out forwards}
+@keyframes sobe-some{0%{opacity:1;transform:translate(0,0) scale(.4)}30%{opacity:1;transform:translate(var(--dx),-38px) scale(1.12)}100%{opacity:0;transform:translate(calc(var(--dx)*1.7),-124px) scale(.7) rotate(28deg)}}
+
+.rodape-nota{text-align:center;color:var(--tinta3);font-size:12.5px;margin:30px 6px 8px;line-height:1.55}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+:focus-visible{outline:3px solid var(--lavanda);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div id="offline">Sem internet — pode anotar, sobe sozinho depois</div>
+
+<div class="porta" id="porta-carregando">
+  <div class="porta-caixa"><div class="girando"></div><p style="margin-top:20px">Abrindo a caderneta…</p></div>
+</div>
+
+<div class="porta" id="porta-erro" hidden>
+  <div class="porta-caixa">
+    <div class="ilustra" style="width:52px;height:52px;color:#B6A9BE;margin:0 auto 10px">
+      <svg viewBox="0 0 24 24" style="width:52px;height:52px" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 8.4v4.4M12 16.4h.01"/><circle cx="12" cy="12" r="8.8"/></svg></div>
+    <h1>Algo travou</h1>
+    <p id="erro-msg"></p>
+  </div>
+</div>
+
+<script>
+/* Script comum (não módulo) de propósito: se o módulo lá embaixo falhar
+   ao carregar, este aqui já está de pé para contar o motivo. */
+window.mostrarErro = function(msg){
+  ['porta-carregando','porta-login'].forEach(function(id){
+    var e = document.getElementById(id); if(e) e.hidden = true;
+  });
+  document.getElementById('porta-erro').hidden = false;
+  document.getElementById('erro-msg').textContent = msg || 'Erro desconhecido.';
+};
+addEventListener('error', function(e){
+  window.mostrarErro(e.message ||
+    'Não consegui carregar os arquivos. Se você abriu o index.html direto pela pasta, não funciona: precisa de um servidor. Veja o guia.');
+});
+addEventListener('unhandledrejection', function(e){
+  window.mostrarErro((e.reason && e.reason.message) || String(e.reason));
+});
+</script>
+
+<div class="porta" id="porta-login" hidden>
+  <div class="porta-caixa">
+    <img class="marca-grande" src="./logo.png" alt="Bia">
+    <p>A caderneta de saúde da Bia</p>
+    <input id="login-email" type="email" inputmode="email" autocomplete="email" placeholder="seu e-mail">
+    <input id="login-senha" type="password" autocomplete="current-password" placeholder="senha">
+    <button class="btn" id="btn-entrar">Entrar</button>
+    <div class="porta-erro" id="login-erro"></div>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
+
+  <!-- ============ HOJE ============ -->
+  <section class="tela on" id="tela-hoje">
+    <div class="hero">
+      <div class="topo">
+        <img class="marca" src="./logo-branco.png" alt="Bia">
+        <button class="eu" id="eu-marca" onclick="abrirMeuCadastro()">·</button>
+      </div>
+      <div class="saudacao">
+        <h1 id="saudacao-txt">Oi</h1>
+        <p id="saudacao-data"></p>
+      </div>
+    </div>
+
+    <button class="carteirinha" id="carteirinha"></button>
+
+    <div class="atalhos" id="atalhos"></div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Remédios de hoje</h2><span id="dose-anel"></span></div>
+      <div id="doses-hoje"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Vem aí</h2><button class="acao" data-ir="agenda">ver agenda</button></div>
+      <div id="proximos"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Última consulta</h2><button class="acao" data-ir="consultas">ver todas</button></div>
+      <div id="ultima-consulta"></div>
+    </div>
+    <p class="rodape-nota">O que um escreve, o outro vê na hora.</p>
+  </section>
+
+  <!-- ============ CONSULTAS ============ -->
+  <section class="tela" id="tela-consultas">
+    <h1 class="titulo-tela">Consultas</h1>
+    <div class="filtros" id="filtros-esp"></div>
+    <div id="lista-consultas"></div>
+  </section>
+
+  <!-- ============ REMÉDIOS ============ -->
+  <section class="tela" id="tela-remedios">
+    <h1 class="titulo-tela">Remédios</h1>
+    <div id="lista-remedios"></div>
+  </section>
+
+  <!-- ============ AGENDA ============ -->
+  <section class="tela" id="tela-agenda">
+    <h1 class="titulo-tela">Agenda</h1>
+    <div id="lista-agenda"></div>
+  </section>
+
+  <!-- ============ AJUSTES ============ -->
+  <section class="tela" id="tela-ajustes">
+    <h1 class="titulo-tela">Ajustes</h1>
+
+    <div class="bloco" style="margin-top:4px">
+      <div class="bloco-cab"><h2>A Bia</h2></div>
+      <button class="card link" onclick="abrirPerfil()">
+        <div class="linha-topo">
+          <div class="bolinha" style="background:#F1E9FA;color:#8E76E0"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="8.4"/><path d="M12 16.4a4.4 4.4 0 0 1 0-8.8 2.2 2.2 0 0 1 0 4.4"/></svg></div>
+          <div><h3 id="aj-nome">Dados dela</h3><div class="sub">Nome, nascimento, alergias, plano</div></div>
+        </div>
+      </button>
+      <button class="card link" onclick="abrirContatos()">
+        <div class="linha-topo">
+          <div class="bolinha" style="background:#E1F3EC;color:#2E9C7C"><svg viewBox="0 0 24 24" class="ic"><rect x="3.6" y="5" width="16.8" height="14" rx="3"/><circle cx="9.6" cy="10.6" r="2.1"/><path d="M6.4 16.2a3.4 3.4 0 0 1 6.4 0M15 9.6h3M15 13.4h3"/></svg></div>
+          <div><h3>Contatos e anotações fixas</h3><div class="sub">Pediatra, plano, o que sempre esquecemos</div></div>
+        </div>
+      </button>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Quem cuida</h2></div>
+      <div id="lista-membros"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Avisos</h2></div>
+      <div id="card-avisos"></div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Ferramentas</h2></div>
+      <button class="card link" onclick="copiarResumo()">
+        <div class="linha-topo">
+          <div class="bolinha" style="background:#FDF0D2;color:#C08B14"><svg viewBox="0 0 24 24" class="ic"><rect x="5" y="4.6" width="14" height="15.8" rx="3"/><path d="M9.2 4.6a1 1 0 0 1 1-1h3.6a1 1 0 0 1 1 1M8.6 10.4h6.8M8.6 14.2h4.4"/></svg></div>
+          <div><h3>Copiar resumo pro médico</h3><div class="sub">Idade, alergias, remédios de agora</div></div>
+        </div>
+      </button>
+      <button class="card link" onclick="exportar()">
+        <div class="linha-topo">
+          <div class="bolinha" style="background:#EDE7FA;color:#8E76E0"><svg viewBox="0 0 24 24" class="ic"><path d="M12 3.8v10M8.2 10.4 12 14.2l3.8-3.8"/><path d="M4.6 16v2.4a2 2 0 0 0 2 2h10.8a2 2 0 0 0 2-2V16"/></svg></div>
+          <div><h3>Baixar uma cópia</h3><div class="sub">Backup em arquivo, por segurança</div></div>
+        </div>
+      </button>
+    </div>
+
+    <div class="bloco" id="bloco-migrar" hidden>
+      <div class="bloco-cab"><h2>Dados antigos</h2></div>
+      <div class="card">
+        <div class="corpo" style="margin-top:0">Achei registros guardados neste aparelho, de antes da nuvem. Quer subir tudo?</div>
+        <div class="btn-linha"><button class="btn" id="btn-migrar">Subir para a nuvem</button></div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <div class="bloco-cab"><h2>Conta</h2></div>
+      <div class="card">
+        <div class="sub" id="aj-conta" style="margin-top:0"></div>
+        <div class="btn-linha"><button class="btn claro" onclick="sairDaConta()">Sair desta conta</button></div>
+      </div>
+    </div>
+    <p class="rodape-nota">Caderneta da Bia · feita em casa</p>
+  </section>
+
+</div>
+
+<button class="mais" id="btn-mais" aria-label="Adicionar" hidden>
+  <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<nav class="abas" id="abas" hidden>
+  <button class="aba" data-tela="hoje" aria-current="true">
+    <svg viewBox="0 0 24 24"><path d="M4 10.4 12 4l8 6.4V19a1.6 1.6 0 0 1-1.6 1.6h-3.6v-5.3H9.2v5.3H5.6A1.6 1.6 0 0 1 4 19z"/></svg>Hoje</button>
+  <button class="aba" data-tela="consultas">
+    <svg viewBox="0 0 24 24"><rect x="5" y="4.6" width="14" height="15.8" rx="3"/><path d="M9.2 4.6a1 1 0 0 1 1-1h3.6a1 1 0 0 1 1 1M8.6 10.4h6.8M8.6 14.2h4.4"/></svg>Consultas</button>
+  <button class="aba" data-tela="remedios">
+    <svg viewBox="0 0 24 24"><rect x="2.6" y="8.4" width="18.8" height="7.2" rx="3.6" transform="rotate(-42 12 12)"/><path d="M9.1 9.1 15 15"/></svg>Remédios</button>
+  <button class="aba" data-tela="agenda">
+    <svg viewBox="0 0 24 24"><rect x="3.8" y="5.6" width="16.4" height="14.8" rx="3"/><path d="M3.8 10.2h16.4M8.4 3.4v4M15.6 3.4v4"/></svg>Agenda</button>
+  <button class="aba" data-tela="ajustes">
+    <svg viewBox="0 0 24 24"><path d="M4.5 7.5h15M4.5 16.5h15"/><circle cx="9.5" cy="7.5" r="2.3"/><circle cx="15" cy="16.5" r="2.3"/></svg>Ajustes</button>
+</nav>
+
+<div class="fundo" id="fundo"></div>
+<div class="folha" id="folha"><div class="puxador"></div><div id="folha-conteudo"></div></div>
+<div id="toast"></div>
+
+<script type="module">
+import { Store } from './store-firestore.js';
+
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const agora = ()=> new Date().toISOString();
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let db = { perfil:{}, consultas:[], remedios:[], eventos:[], membros:[], doses:{} };
+let usuario = null, ouvindo = false, carregou = false, perguntou = false;
+
+const eu = ()=> db.membros.find(m => m.id === Store.uid()) || {};
+const meuNome = ()=> eu().apelido || (usuario?.email || '').split('@')[0];
+const iniciais = t => (t||'?').trim().split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+
+/* ---------- ícones desenhados (um só traço, mesma grade 24x24) ---------- */
+const D = {
+  estetoscopio:'<path d="M6.5 3v5.2a5.5 5.5 0 0 0 11 0V3"/><path d="M12 13.7v2.4a3.6 3.6 0 0 0 7.2 0v-.8"/><circle cx="19.2" cy="13" r="2.1"/>',
+  dente:'<path d="M7.4 4.4c-2 0-3 1.6-3 3.7 0 2.4 1 3.5 1.6 6 .5 2 .6 4.5 2 4.5 1.3 0 1.3-2.3 1.9-4.1.3-1 1.9-1 2.2 0 .6 1.8.6 4.1 1.9 4.1 1.4 0 1.5-2.5 2-4.5.6-2.5 1.6-3.6 1.6-6 0-2.1-1-3.7-3-3.7-1.6 0-2.3.8-3.6.8s-2-.8-3.6-.8z"/>',
+  olho:'<path d="M2.6 12S6.2 6.2 12 6.2 21.4 12 21.4 12 17.8 17.8 12 17.8 2.6 12 2.6 12z"/><circle cx="12" cy="12" r="2.7"/>',
+  ouvido:'<path d="M7.2 9.4a4.8 4.8 0 0 1 9.6 0c0 2.9-2.4 3.6-3.3 5.3-.7 1.3-.2 3.6-2.6 3.6a2.6 2.6 0 0 1-2.6-2.6"/><path d="M10.1 9.6a1.9 1.9 0 0 1 3.8 0c0 1.6-1.6 1.8-1.9 3"/>',
+  folha:'<path d="M5 19.2c-.6-7.2 4.6-12.6 14.2-13.4C20 13.4 15.5 19 9 19.2c-1.6 0-4 .5-4 0z"/><path d="M8.6 15.6c2.2-2.4 4.6-4 7.6-5.1"/>',
+  flor:'<circle cx="12" cy="7.4" r="2.9"/><circle cx="16.6" cy="12" r="2.9"/><circle cx="12" cy="16.6" r="2.9"/><circle cx="7.4" cy="12" r="2.9"/>',
+  som:'<path d="M4.2 10.2v3.6M7.8 7.6v8.8"/><path d="M12.4 9.2a4.4 4.4 0 0 1 0 5.6M15.8 6.6a8.2 8.2 0 0 1 0 10.8"/>',
+  cabeca:'<circle cx="12" cy="12" r="8.4"/><path d="M12 16.4a4.4 4.4 0 0 1 0-8.8 2.2 2.2 0 0 1 0 4.4"/>',
+  osso:'<path d="M9.4 9.4 14.6 14.6"/><circle cx="7.6" cy="8.4" r="2.2"/><circle cx="8.4" cy="6.4" r="2.2"/><circle cx="16.4" cy="15.6" r="2.2"/><circle cx="15.6" cy="17.6" r="2.2"/>',
+  coracao:'<path d="M12 19.8S4.8 15 4.8 10.5A3.9 3.9 0 0 1 12 8.3a3.9 3.9 0 0 1 7.2 2.2c0 4.5-7.2 9.3-7.2 9.3z"/>',
+  seringa:'<path d="M13.6 3.8 20.2 10.4M17.6 5.8l-2.4 2.4M11.4 9.6l3 3"/><path d="M4 20l3.6-1 8-8-2.6-2.6-8 8z"/>',
+  estrela:'<path d="M12 4.4l1.9 4.7 4.7 1.9-4.7 1.9L12 17.6l-1.9-4.7-4.7-1.9 4.7-1.9z"/>',
+  caderno:'<rect x="5" y="4.6" width="14" height="15.8" rx="3"/><path d="M9.2 4.6a1 1 0 0 1 1-1h3.6a1 1 0 0 1 1 1M8.6 10.4h6.8M8.6 14.2h4.4"/>',
+  comprimido:'<rect x="2.6" y="8.4" width="18.8" height="7.2" rx="3.6" transform="rotate(-42 12 12)"/><path d="M9.1 9.1 15 15"/>',
+  calendario:'<rect x="3.8" y="5.6" width="16.4" height="14.8" rx="3"/><path d="M3.8 10.2h16.4M8.4 3.4v4M15.6 3.4v4"/>',
+  broto:'<path d="M12 20.4v-7"/><path d="M12 14.4c-3.4 0-5.6-2-5.6-5 3.4 0 5.6 2 5.6 5zM12 12.6c0-3 2.2-5 5.6-5 0 3-2.2 5-5.6 5z"/>',
+  balao:'<path d="M12 15.4c3 0 5.2-2.7 5.2-6S15 3.6 12 3.6 6.8 6.1 6.8 9.4s2.2 6 5.2 6z"/><path d="M12 15.4v1.4M10.8 18.2c1.4.6 1 2.2-.8 2.2"/>',
+  pessoa:'<circle cx="12" cy="8.4" r="3.7"/><path d="M5.4 20.4a6.6 6.6 0 0 1 13.2 0"/>'
+};
+const ico = (n, cls='ic') => `<svg viewBox="0 0 24 24" class="${cls}">${D[n]||D.estrela}</svg>`;
+
+const ESPECIALIDADES = [
+  ['Pediatra','estetoscopio','#8E76E0'], ['Dentista','dente','#4FA9E0'], ['Oftalmo','olho','#3EB894'],
+  ['Otorrino','ouvido','#D9A21F'], ['Dermato','folha','#D77FC2'], ['Alergista','flor','#F2705A'],
+  ['Fono','som','#4CBBA8'], ['Neuro','cabeca','#9B7FE0'], ['Ortopedista','osso','#6E9FD8'],
+  ['Psicologia','coracao','#EE9558'], ['Vacina','seringa','#3EB894'], ['Outro','estrela','#9B8FD8']
+];
+const espInfo = n => ESPECIALIDADES.find(e=>e[0]===n) || ESPECIALIDADES.at(-1);
+const tinta = hex => hex+'22';
+const PARENTESCOS = ['Pai','Mãe','Avó','Avô','Madrasta','Padrasto','Responsável'];
+
+const hojeISO = ()=> new Date().toLocaleDateString('sv-SE');
+function dataBR(iso){ if(!iso) return ''; const [a,m,d]=iso.split('-'); return `${d}/${m}/${a}`; }
+const diaSemana = iso => new Date(iso+'T12:00').toLocaleDateString('pt-BR',{weekday:'long'}).replace(/-feira/,'');
+function quandoTexto(iso){
+  const dif = Math.round((new Date(iso+'T12:00') - new Date(hojeISO()+'T12:00'))/86400000);
+  if(dif===0) return 'hoje';
+  if(dif===1) return 'amanhã';
+  if(dif===-1) return 'ontem';
+  if(dif>1 && dif<7) return diaSemana(iso);
+  if(dif>0) return `em ${dif} dias`;
+  return `há ${Math.abs(dif)} dias`;
+}
+function idade(nasc){
+  if(!nasc) return '';
+  const n=new Date(nasc+'T12:00'), h=new Date();
+  let anos=h.getFullYear()-n.getFullYear(), meses=h.getMonth()-n.getMonth();
+  if(h.getDate()<n.getDate()) meses--;
+  if(meses<0){anos--;meses+=12}
+  if(anos<1) return `${meses} ${meses===1?'mês':'meses'}`;
+  return `${anos} ${anos===1?'ano':'anos'}` + (meses? ` e ${meses} ${meses===1?'mês':'meses'}` : '');
+}
+const remedioAtivo = r => !r.fim || r.fim >= hojeISO();
+
+/* ---------- entrar / sair ---------- */
+function mostrar(quem){
+  $('#porta-login').hidden      = quem!=='login';
+  $('#porta-carregando').hidden = quem!=='carregando';
+  $('#porta-erro').hidden       = true;
+  const dentro = quem==='app';
+  $('#app').hidden = $('#abas').hidden = !dentro;
+  $('#btn-mais').hidden = !dentro || telaAtual==='ajustes';
+}
+
+Store.aoTrocarUsuario(u=>{
+  usuario = u;
+  if(!u){ mostrar('login'); return; }
+  $('#aj-conta').textContent = 'Conectado como '+u.email;
+  mostrar(carregou ? 'app' : 'carregando');
+  if(!ouvindo){
+    ouvindo = true;
+    Store.ouvir((novo, parte)=>{
+      db = novo;
+      if(!carregou){ carregou = true; mostrar('app'); }
+      if(parte==='perfil' && !perguntou && !db.perfil.nome){ perguntou=true; setTimeout(abrirPerfil,600); }
+      if(parte==='membros') registrarAparelho();
+      vigiar(parte);
+      if(parte==='eventos') olharVespera();
+      if(parte==='remedios' || parte==='doses') olharDoses();
+      desenhar(); verMigracao();
+    });
+  }
+});
+
+$('#btn-entrar').onclick = async ()=>{
+  const email=$('#login-email').value.trim(), senha=$('#login-senha').value;
+  if(!email || !senha) return $('#login-erro').textContent='Preencha e-mail e senha.';
+  $('#btn-entrar').disabled = true; $('#login-erro').textContent='';
+  try{ await Store.entrar(email, senha); }
+  catch(e){
+    const c = (e && e.code) || '';
+    $('#login-erro').textContent =
+      c.includes('api-key')       ? 'A configuração do Firebase não foi preenchida em store-firestore.js.' :
+      c.includes('unauthorized')  ? 'Este endereço não está autorizado no Firebase (Authentication → Configurações → Domínios autorizados).' :
+      c.includes('network')       ? 'Sem conexão com o Firebase.' :
+      c.includes('configuration') ? 'Login por e-mail/senha não está ativado no Firebase.' :
+                                    'E-mail ou senha não conferem.';
+  }
+  finally{ $('#btn-entrar').disabled = false; }
+};
+$('#login-senha').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#btn-entrar').click(); });
+function sairDaConta(){ if(confirm('Sair desta conta neste aparelho?')){ Store.sair(); carregou=false; } }
+
+/* ---------- navegação ---------- */
+let telaAtual='hoje', filtroEsp='Tudo';
+function ir(tela){
+  telaAtual=tela;
+  $$('.tela').forEach(t=>t.classList.toggle('on', t.id==='tela-'+tela));
+  $$('.aba').forEach(b=>b.setAttribute('aria-current', b.dataset.tela===tela));
+  $('#btn-mais').hidden = (tela==='ajustes');
+  window.scrollTo({top:0});
+  desenhar();
+}
+$$('.aba').forEach(b=>b.onclick=()=>ir(b.dataset.tela));
+$$('[data-ir]').forEach(b=>b.onclick=()=>ir(b.dataset.ir));
+
+function desenhar(){
+  if(telaAtual==='hoje'){ desenhaSaudacao(); desenhaAtalhos(); desenhaCarteirinha(); desenhaDoses(); desenhaProximos(); desenhaUltima(); }
+  if(telaAtual==='consultas'){ desenhaFiltros(); desenhaConsultas(); }
+  if(telaAtual==='remedios') desenhaRemedios();
+  if(telaAtual==='agenda') desenhaAgenda();
+  if(telaAtual==='ajustes'){ $('#aj-nome').textContent = db.perfil.nome ? 'Dados da '+db.perfil.nome : 'Dados dela'; desenhaMembros(); desenhaAvisos(); }
+}
+
+function desenhaAtalhos(){
+  const b = [['consulta','caderno','Nova consulta'],['remedio','comprimido','Remédio'],['evento','calendario','Compromisso']];
+  $('#atalhos').innerHTML = b.map(([k,i,t])=>
+    `<button class="atalho" onclick="atalho('${k}')">${ico(i)}${t}</button>`).join('');
+}
+function atalho(k){ ({consulta:abrirConsulta, remedio:abrirRemedio, evento:abrirEvento})[k](); }
+
+function desenhaSaudacao(){
+  const h = new Date().getHours();
+  const parte = h<12 ? 'Bom dia' : h<18 ? 'Boa tarde' : 'Boa noite';
+  const quem = eu().apelido;
+  $('#saudacao-txt').textContent = quem ? `${parte}, ${quem}` : parte;
+  $('#saudacao-data').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long', day:'numeric', month:'long'});
+  $('#eu-marca').textContent = iniciais(quem || usuario?.email || '?');
+}
+
+/* ---------- carteirinha ---------- */
+function desenhaCarteirinha(){
+  const p=db.perfil||{}, chips=[];
+  if(p.sangue) chips.push(`<span class="chip sangue">🩸 ${esc(p.sangue)}</span>`);
+  (p.alergias||'').split(',').map(s=>s.trim()).filter(Boolean)
+    .forEach(a=>chips.push(`<span class="chip alerta">⚠️ ${esc(a)}</span>`));
+  if(p.plano) chips.push(`<span class="chip plano">💳 ${esc(p.plano)}</span>`);
+  const ativos = db.remedios.filter(remedioAtivo).length;
+  if(ativos) chips.push(`<span class="chip">💊 ${ativos} em uso</span>`);
+
+  $('#carteirinha').innerHTML = `
+    <span class="selo">caderneta</span>
+    <div class="cart-topo">
+      <div class="avatar">${esc(p.bicho||'🐣')}</div>
+      <div>
+        <div class="cart-nome display">${esc(p.nome||'Toque para começar')}</div>
+        <div class="cart-idade">${p.nascimento? idade(p.nascimento)+' · nasceu em '+dataBR(p.nascimento) : 'Adicione o nome e a data de nascimento'}</div>
+      </div>
+    </div>
+    ${chips.length? '<hr class="picotado"><div class="chips">'+chips.join('')+'</div>' : ''}`;
+}
+$('#carteirinha').onclick = ()=>abrirPerfil();
+
+/* ---------- doses ---------- */
+function desenhaDoses(){
+  const hoje=hojeISO(), itens=[];
+  db.remedios.filter(r=>remedioAtivo(r) && (!r.inicio || r.inicio<=hoje))
+    .forEach(r=>(r.horarios||[]).forEach(h=>itens.push({r,h})));
+  itens.sort((a,b)=>a.h.localeCompare(b.h));
+  const feitas = itens.filter(i=>db.doses[`${i.r.id}|${hoje}|${i.h}`]).length;
+
+  const C = 2*Math.PI*19;
+  $('#dose-anel').innerHTML = itens.length ? `
+    <svg class="anel" viewBox="0 0 44 44">
+      <circle class="trilha" cx="22" cy="22" r="19"/>
+      <circle class="feito" cx="22" cy="22" r="19"
+        style="stroke-dasharray:${C};stroke-dashoffset:${C*(1-feitas/itens.length)}"/>
+      <text x="22" y="27" text-anchor="middle">${feitas}/${itens.length}</text>
+    </svg>` : '';
+
+  if(!itens.length){
+    $('#doses-hoje').innerHTML = `<div class="vazio"><div class="ilustra">${ico('broto')}</div>
+      <p>Nenhum remédio marcado pra hoje.</p>
+      <button class="btn claro" onclick="abrirRemedio()">Cadastrar um remédio</button></div>`;
+    return;
+  }
+  $('#doses-hoje').innerHTML = itens.map(i=>{
+    const k=`${i.r.id}|${hoje}|${i.h}`, f=db.doses[k];
+    return `<div class="dose ${f?'feita':''}">
+      <div class="dose-hora">${esc(i.h)}</div>
+      <div>
+        <div class="dose-nome">${esc(i.r.nome)}</div>
+        <div class="dose-sub">${esc(i.r.dose||'')}${f? ' · deu '+esc(f.por) : ''}</div>
+      </div>
+      <button class="marca" onclick="marcarDose('${k}',event)" aria-label="Marcar dose">${f?'✓':''}</button>
+    </div>`;
+  }).join('');
+}
+function marcarDose(k,ev){
+  if(db.doses[k]) semTravar(Store.apagarDose(k));
+  else { semTravar(Store.gravarDose(k,{t:agora(), por:meuNome()||'alguém'})); faiscas(ev,['💜','✨','⭐']); }
+}
+
+/* ---------- eventos ---------- */
+const eventosFuturos = ()=> db.eventos.filter(e=>e.data>=hojeISO())
+  .sort((a,b)=>(a.data+(a.hora||'')).localeCompare(b.data+(b.hora||'')));
+
+function cardEvento(e){
+  const [,nome,cor]=espInfo(e.tipo);
+  return `<button class="card link" onclick="abrirEvento('${e.id}')">
+    <div class="linha-topo">
+      <div class="bolinha" style="background:${tinta(cor)};color:${cor}">${ico(nome)}</div>
+      <div style="flex:1">
+        <h3>${esc(e.titulo)}</h3>
+        <div class="sub">${dataBR(e.data)} · ${quandoTexto(e.data)}${e.hora? ' · '+esc(e.hora):''}</div>
+        ${e.local? `<div class="sub">📍 ${esc(e.local)}</div>`:''}
+      </div>
+    </div>
+    ${e.obs? `<div class="corpo">${esc(e.obs)}</div>`:''}</button>`;
+}
+function desenhaProximos(){
+  const l=eventosFuturos().slice(0,2);
+  $('#proximos').innerHTML = l.length? l.map(cardEvento).join('')
+    : `<div class="vazio"><div class="ilustra">${ico('balao')}</div><p>Nada marcado por enquanto.</p>
+       <button class="btn claro" onclick="abrirEvento()">Marcar um compromisso</button></div>`;
+}
+function desenhaUltima(){
+  const c=[...db.consultas].sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
+  $('#ultima-consulta').innerHTML = c? cardConsulta(c)
+    : `<div class="vazio"><div class="ilustra">${ico('caderno')}</div><p>O histórico começa na primeira anotação.</p>
+       <button class="btn claro" onclick="abrirConsulta()">Registrar uma consulta</button></div>`;
+}
+
+/* ---------- consultas ---------- */
+function setFiltro(f){ filtroEsp=f; desenhaFiltros(); desenhaConsultas(); }
+function desenhaFiltros(){
+  const usadas=[...new Set(db.consultas.map(c=>c.especialidade))];
+  $('#filtros-esp').innerHTML = ['Tudo',...usadas].map(f=>
+    `<button class="filtro" aria-pressed="${filtroEsp===f}" onclick="setFiltro('${esc(f)}')">
+      ${f==='Tudo'?'Tudo':`<span style="display:inline-flex;align-items:center;gap:6px;vertical-align:-4px">${ico(espInfo(f)[1],'ic mini')}${esc(f)}</span>`}</button>`).join('');
+  $('#filtros-esp').style.display = usadas.length>1? 'flex':'none';
+}
+function cardConsulta(c){
+  const [,nome,cor]=espInfo(c.especialidade);
+  return `<button class="card link" onclick="abrirConsulta('${c.id}')">
+    <div class="linha-topo">
+      <div class="bolinha" style="background:${tinta(cor)};color:${cor}">${ico(nome)}</div>
+      <div style="flex:1">
+        <h3>${esc(c.especialidade)}${c.medico? ' · '+esc(c.medico):''}</h3>
+        <div class="sub">${dataBR(c.data)}${c.autor? ' · anotou '+esc(c.autor):''}</div>
+      </div>
+    </div>
+    ${c.motivo? `<div class="corpo"><strong>Por quê:</strong> ${esc(c.motivo)}</div>`:''}
+    ${c.conduta? `<div class="corpo"><strong>O que ficou:</strong> ${esc(c.conduta)}</div>`:''}
+    ${c.retorno? `<div class="chips" style="margin-top:11px"><span class="chip">🔁 retorno ${dataBR(c.retorno)}</span></div>`:''}
+  </button>`;
+}
+function desenhaConsultas(){
+  let l=[...db.consultas].sort((a,b)=>(b.data||'').localeCompare(a.data||''));
+  if(filtroEsp!=='Tudo') l=l.filter(c=>c.especialidade===filtroEsp);
+  $('#lista-consultas').innerHTML = l.length? l.map(cardConsulta).join('')
+    : `<div class="vazio"><div class="ilustra">${ico('estetoscopio')}</div>
+       <p>Cada consulta anotada vira memória pro próximo médico.</p>
+       <button class="btn claro" onclick="abrirConsulta()">Registrar a primeira</button></div>`;
+}
+
+/* ---------- remédios ---------- */
+function cardRemedio(r){
+  return `<button class="card link" onclick="abrirRemedio('${r.id}')">
+    <div class="linha-topo">
+      <div class="bolinha" style="background:${tinta('#3EB894')};color:#2E9C7C">${ico('comprimido')}</div>
+      <div style="flex:1">
+        <h3>${esc(r.nome)}</h3>
+        <div class="sub">${esc(r.dose||'')}${r.horarios?.length? ' · '+r.horarios.join(', '):''}</div>
+        ${r.motivo? `<div class="sub">para ${esc(r.motivo)}</div>`:''}
+      </div>
+    </div>
+    ${r.obs? `<div class="corpo">${esc(r.obs)}</div>`:''}
+    <div class="chips" style="margin-top:11px">
+      ${r.inicio?`<span class="chip">início ${dataBR(r.inicio)}</span>`:''}
+      ${r.fim?`<span class="chip">até ${dataBR(r.fim)}</span>`:'<span class="chip plano">em uso</span>'}
+    </div></button>`;
+}
+function desenhaRemedios(){
+  const ativos=db.remedios.filter(remedioAtivo), antigos=db.remedios.filter(r=>!remedioAtivo(r));
+  $('#lista-remedios').innerHTML =
+    (ativos.length? ativos.map(cardRemedio).join('')
+      : `<div class="vazio"><div class="ilustra">${ico('comprimido')}</div><p>Nenhum remédio em uso agora.</p>
+         <button class="btn claro" onclick="abrirRemedio()">Cadastrar remédio</button></div>`)
+    + (antigos.length? `<div class="bloco"><div class="bloco-cab"><h2>Já usou</h2></div>${antigos.map(cardRemedio).join('')}</div>`:'');
+}
+
+/* ---------- agenda ---------- */
+function desenhaAgenda(){
+  const fut=eventosFuturos(), pas=db.eventos.filter(e=>e.data<hojeISO()).sort((a,b)=>b.data.localeCompare(a.data));
+  $('#lista-agenda').innerHTML =
+    (fut.length? fut.map(cardEvento).join('')
+      : `<div class="vazio"><div class="ilustra">${ico('calendario')}</div><p>Agenda livre.</p>
+         <button class="btn claro" onclick="abrirEvento()">Marcar compromisso</button></div>`)
+    + (pas.length? `<div class="bloco"><div class="bloco-cab"><h2>Já passou</h2></div>${pas.slice(0,10).map(cardEvento).join('')}</div>`:'');
+}
+
+/* ---------- membros ---------- */
+function desenhaMembros(){
+  const meu = Store.uid();
+  const cards = db.membros.map(m=>{
+    const sou = m.id===meu;
+    const linhas = [m.parentesco, m.email, m.pix? 'pix: '+m.pix : ''].filter(Boolean);
+    return `<button class="card link" ${sou?`onclick="abrirMeuCadastro()"`:'disabled style="opacity:.85"'}>
+      <div class="linha-topo">
+        <div class="bolinha" style="background:${sou?'#EDE7FA':'#FFE9F3'};font-family:'Baloo 2';font-weight:800;font-size:15px">${esc(iniciais(m.apelido||m.nomeCompleto))}</div>
+        <div style="flex:1">
+          <h3>${esc(m.apelido||m.nomeCompleto||'Sem nome')}${sou?' · você':''}</h3>
+          ${linhas.map(l=>`<div class="sub">${esc(l)}</div>`).join('')}
+        </div>
+      </div></button>`;
+  }).join('');
+
+  const souCadastrado = db.membros.some(m=>m.id===meu);
+  $('#lista-membros').innerHTML = cards + (souCadastrado ? '' :
+    `<div class="vazio"><div class="ilustra">${ico('pessoa')}</div>
+     <p>Você ainda não se cadastrou. Isso é o que faz cada anotação mostrar quem escreveu.</p>
+     <button class="btn claro" onclick="abrirMeuCadastro()">Completar meu cadastro</button></div>`)
+    + (db.membros.length<2 ? `<p class="dica" style="margin:8px 4px 0">Quando a outra pessoa entrar e se cadastrar, ela aparece aqui.</p>` : '');
+}
+
+function desenhaAvisos(){
+  const tem = 'Notification' in window;
+  const estado = !tem ? 'nao' : Notification.permission;
+  const txt = {
+      granted:['Avisos ligados neste aparelho','Você recebe quando o outro anota algo, na hora do remédio e na véspera de compromisso.'],
+    default:['Ligar avisos neste aparelho','Toque para permitir. Funciona com o app aberto, inclusive em segundo plano.'],
+    denied:['Avisos bloqueados','Você recusou antes. Libere nas permissões do site, no cadeado da barra de endereço.'],
+    nao:['Sem suporte a avisos','Este navegador não tem essa função.']
+  }[estado];
+  $('#card-avisos').innerHTML = `
+    <button class="card link" ${estado==='default'?'onclick="pedirAvisos()"':'disabled'}>
+      <div class="linha-topo">
+        <div class="bolinha" style="background:${estado==='granted'?'#E1F3EC':'#FDF0D2'};color:${estado==='granted'?'#2E9C7C':'#C08B14'}">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M18 8.6a6 6 0 1 0-12 0c0 6-2.4 7.4-2.4 7.4h16.8S18 14.6 18 8.6z"/><path d="M13.7 19.4a2 2 0 0 1-3.4 0"/></svg>
+        </div>
+        <div style="flex:1"><h3>${txt[0]}</h3><div class="sub">${txt[1]}</div></div>
+      </div>
+    </button>
+    ${db.dispositivos?.length ? `<p class="dica" style="margin:8px 4px 0">Recebendo push em: ${db.dispositivos.map(d=>esc(d.nome||'?')).join(', ')}.</p>` : ''}
+    <p class="dica" style="margin:6px 4px 0">Para lembrete que toca com o app fechado, use o botão <strong>Criar alarmes no celular</strong> dentro de cada remédio.</p>`;
+}
+
+function abrirMeuCadastro(){
+  const m = eu();
+  abrirFolha(`<h2>Meu cadastro</h2>
+    <p class="dica">Só você edita o seu. A outra pessoa vê, mas não altera.</p>
+    <label for="m-nome">Nome completo</label>
+    <input id="m-nome" value="${esc(m.nomeCompleto)}" placeholder="Como está no documento">
+    <label for="m-apelido">Como você aparece no app</label>
+    <input id="m-apelido" value="${esc(m.apelido)}" placeholder="Papai">
+    <p class="dica">É esse nome que aparece em "anotou" e "deu o remédio".</p>
+    <label for="m-parentesco">Parentesco</label>
+    <select id="m-parentesco">
+      <option value=""></option>
+      ${PARENTESCOS.map(p=>`<option ${m.parentesco===p?'selected':''}>${p}</option>`).join('')}
+    </select>
+    <label for="m-email">E-mail</label>
+    <input id="m-email" value="${esc(m.email || usuario?.email || '')}" disabled>
+    <p class="dica">É o e-mail com que você entrou. Para trocar, é no Firebase.</p>
+    <label for="m-pix">Chave pix</label>
+    <input id="m-pix" value="${esc(m.pix)}" placeholder="telefone, e-mail ou chave aleatória">
+    <p class="dica">Serve pra vocês se acertarem nas despesas. Prefira chave aleatória ou e-mail — não precisa ser o CPF.</p>
+    <div class="btn-linha"><button class="btn" onclick="salvarMeuCadastro(event)">Salvar</button></div>`);
+}
+function salvarMeuCadastro(ev){
+  const id = Store.uid();
+  if(!id) return aviso('Não consegui identificar sua conta.');
+  if(!val('m-apelido')) return aviso('Escreva como você quer aparecer no app.');
+  semTravar(Store.gravarItem('membros', { id,
+    nomeCompleto:val('m-nome'), apelido:val('m-apelido'), parentesco:val('m-parentesco'),
+    email: usuario?.email || '', pix:val('m-pix') }));
+  fecharFolha(); comemora(ev,'Cadastro salvo');
+}
+
+/* ---------- folha ---------- */
+function abrirFolha(html){
+  $('#folha-conteudo').innerHTML = html;
+  $('#folha').classList.add('on'); $('#fundo').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function fecharFolha(){
+  $('#folha').classList.remove('on'); $('#fundo').classList.remove('on');
+  document.body.style.overflow='';
+}
+$('#fundo').onclick = fecharFolha;
+const val = id => ($('#'+id)?.value||'').trim();
+
+/* Grava sem travar a tela. Offline, a promessa do Firestore só resolve
+   quando volta o sinal — por isso nada de await aqui: o cache local já
+   aplicou a mudança e a tela atualiza na hora. */
+const semTravar = p => p.catch(()=>aviso('Guardei aqui, mas ainda não subiu.'));
+
+/* ---------- perfil da criança ---------- */
+const BICHOS=['🐣','🐰','🦄','🐻','🐨','🦋','🌻','🐧','🐢','⭐'];
+function abrirPerfil(){
+  const p=db.perfil||{};
+  abrirFolha(`<h2>Dados dela</h2>
+    <label>Bichinho</label>
+    <div class="filtros" style="padding-bottom:4px">${BICHOS.map(b=>
+      `<button class="filtro" aria-pressed="${p.bicho===b}" style="font-size:20px" onclick="escolherBicho('${b}')">${b}</button>`).join('')}</div>
+    <label for="p-nome">Nome</label><input id="p-nome" value="${esc(p.nome)}" placeholder="Como vocês a chamam">
+    <div class="dupla">
+      <div><label for="p-nasc">Nascimento</label><input type="date" id="p-nasc" value="${esc(p.nascimento)}"></div>
+      <div><label for="p-sangue">Tipo sanguíneo</label><input id="p-sangue" value="${esc(p.sangue)}" placeholder="O+"></div>
+    </div>
+    <label for="p-alergias">Alergias</label>
+    <input id="p-alergias" value="${esc(p.alergias)}" placeholder="Dipirona, amendoim">
+    <p class="dica">Separe por vírgula. Aparecem em vermelho na carteirinha.</p>
+    <label for="p-plano">Plano de saúde</label><input id="p-plano" value="${esc(p.plano)}" placeholder="Nome e carteirinha">
+    <label for="p-obs">Anotações fixas</label>
+    <textarea id="p-obs" placeholder="Peso, altura, o que sempre perguntam...">${esc(p.obs)}</textarea>
+    <div class="btn-linha"><button class="btn" onclick="salvarPerfil(event)">Salvar</button></div>`);
+}
+function escolherBicho(b){
+  semTravar(Store.gravarPerfil({...db.perfil, bicho:b}));
+  db.perfil = {...db.perfil, bicho:b}; abrirPerfil();
+}
+function salvarPerfil(ev){
+  semTravar(Store.gravarPerfil({...db.perfil,
+    nome:val('p-nome'), nascimento:val('p-nasc'), sangue:val('p-sangue'),
+    alergias:val('p-alergias'), plano:val('p-plano'), obs:val('p-obs')}));
+  fecharFolha(); comemora(ev,'Tudo salvo');
+}
+function abrirContatos(){
+  abrirFolha(`<h2>Contatos e anotações fixas</h2>
+    <p class="dica">Telefones, endereço da clínica, senha do plano — o que vocês dois precisam achar rápido.</p>
+    <textarea id="p-obs2" style="min-height:200px;margin-top:12px">${esc(db.perfil.obs)}</textarea>
+    <div class="btn-linha"><button class="btn" onclick="salvarContatos(event)">Salvar</button></div>`);
+}
+function salvarContatos(ev){
+  semTravar(Store.gravarPerfil({...db.perfil, obs:val('p-obs2')}));
+  fecharFolha(); comemora(ev,'Salvo');
+}
+
+/* ---------- consulta ---------- */
+function abrirConsulta(id){
+  const c = db.consultas.find(x=>x.id===id) || {data:hojeISO(), especialidade:'Pediatra'};
+  abrirFolha(`<h2>${id?'Consulta':'Nova consulta'}</h2>
+    <label for="c-esp">Especialidade</label>
+    <select id="c-esp">${ESPECIALIDADES.map(e=>`<option ${c.especialidade===e[0]?'selected':''}>${e[0]}</option>`).join('')}</select>
+    <div class="dupla">
+      <div><label for="c-data">Data</label><input type="date" id="c-data" value="${esc(c.data)}"></div>
+      <div><label for="c-medico">Médico(a)</label><input id="c-medico" value="${esc(c.medico)}" placeholder="Dra. ..."></div>
+    </div>
+    <label for="c-local">Onde foi</label><input id="c-local" value="${esc(c.local)}" placeholder="Clínica, hospital">
+    <label for="c-motivo">Por que fomos</label><input id="c-motivo" value="${esc(c.motivo)}" placeholder="Tosse há 5 dias">
+    <label for="c-conduta">O que o médico disse</label>
+    <textarea id="c-conduta" placeholder="Diagnóstico, receita, orientações, exames pedidos">${esc(c.conduta)}</textarea>
+    <label for="c-retorno">Retorno marcado</label><input type="date" id="c-retorno" value="${esc(c.retorno)}">
+    <p class="dica">Se preencher, vira um compromisso na agenda automaticamente.</p>
+    <div class="btn-linha"><button class="btn" onclick="salvarConsulta('${id||''}',event)">Salvar</button></div>
+    ${id?`<div class="btn-linha"><button class="btn perigo" onclick="apagar('consultas','${id}')">Apagar</button></div>`:''}`);
+}
+function salvarConsulta(id,ev){
+  if(!val('c-data')) return aviso('Escolha a data da consulta');
+  const dados={ id: id||uid(), especialidade:val('c-esp'), data:val('c-data'), medico:val('c-medico'),
+    local:val('c-local'), motivo:val('c-motivo'), conduta:val('c-conduta'), retorno:val('c-retorno'), autor: meuNome() };
+  semTravar(Store.gravarItem('consultas', dados));
+  if(dados.retorno && !db.eventos.some(e=>e.data===dados.retorno && e.tipo===dados.especialidade)){
+    semTravar(Store.gravarItem('eventos', {id:uid(), data:dados.retorno, hora:'', tipo:dados.especialidade,
+      titulo:'Retorno · '+dados.especialidade, local:dados.local, obs:'', autor:meuNome()}));
+  }
+  fecharFolha(); comemora(ev,'Consulta guardada');
+}
+
+/* ---------- remédio ---------- */
+let horas = [];   // horários escolhidos no formulário aberto
+
+function gradeHoras(){
+  const cheias = Array.from({length:24},(_,i)=>String(i).padStart(2,'0')+':00');
+  const extras = horas.filter(x=>!cheias.includes(x));
+  const todas = [...cheias, ...extras].sort();
+  $('#grade-horas').innerHTML = todas.map(x=>
+    `<button type="button" class="hora ${horas.includes(x)?'on':''}" onclick="tocarHora('${x}')">${x}</button>`).join('');
+  $('#resumo-horas').textContent = horas.length
+    ? `${horas.length}x ao dia · ${horas.join(' · ')}`
+    : 'Nenhum horário escolhido ainda.';
+}
+function tocarHora(x){
+  horas = horas.includes(x) ? horas.filter(y=>y!==x) : [...horas, x].sort();
+  gradeHoras();
+}
+function somarHora(){
+  const v = $('#hora-livre').value;
+  if(!v) return aviso('Escolha um horário primeiro');
+  if(horas.includes(v)) return aviso('Esse horário já está na lista');
+  horas = [...horas, v].sort(); gradeHoras();
+}
+/* Espalha N doses no dia a partir do primeiro horário já escolhido
+   (ou das 8h, se nenhum). 3x ao dia a partir das 8h vira 8, 16 e 0h. */
+function receita(n){
+  if(!n){ horas = []; return gradeHoras(); }
+  const base = horas.length ? parseInt(horas[0]) : 8;
+  const passo = 24/n;
+  horas = Array.from({length:n},(_,i)=>String((base + i*passo) % 24).padStart(2,'0')+':00').sort();
+  gradeHoras();
+}
+
+function abrirRemedio(id){
+  const r = db.remedios.find(x=>x.id===id) || {inicio:hojeISO(), horarios:[]};
+  horas = [...(r.horarios||[])];
+  abrirFolha(`<h2>${id?'Remédio':'Novo remédio'}</h2>
+    <label for="r-nome">Nome</label><input id="r-nome" value="${esc(r.nome)}" placeholder="Amoxicilina">
+    <label for="r-dose">Quanto dar</label><input id="r-dose" value="${esc(r.dose)}" placeholder="5 ml">
+    <label>Horários</label>
+    <div class="receitas">
+      <button type="button" class="receita" onclick="receita(1)">1x ao dia</button>
+      <button type="button" class="receita" onclick="receita(2)">12 em 12h</button>
+      <button type="button" class="receita" onclick="receita(3)">8 em 8h</button>
+      <button type="button" class="receita" onclick="receita(4)">6 em 6h</button>
+      <button type="button" class="receita" onclick="receita(0)">limpar</button>
+    </div>
+    <div class="grade-horas" id="grade-horas"></div>
+    <div class="dupla" style="margin-top:12px;align-items:flex-end">
+      <div><label for="hora-livre" style="margin-top:0">Outro horário</label><input type="time" id="hora-livre"></div>
+      <button type="button" class="btn claro" style="width:auto;padding:12px 18px" onclick="somarHora()">Incluir</button>
+    </div>
+    <div class="resumo-horas" id="resumo-horas"></div>
+    <p class="dica">Toque nos horários. Eles aparecem na tela Hoje pra marcar quando der.</p>
+    <label for="r-motivo">Para quê</label><input id="r-motivo" value="${esc(r.motivo)}" placeholder="Infecção de ouvido">
+    <div class="dupla">
+      <div><label for="r-ini">Começou</label><input type="date" id="r-ini" value="${esc(r.inicio)}"></div>
+      <div><label for="r-fim">Termina</label><input type="date" id="r-fim" value="${esc(r.fim)}"></div>
+    </div>
+    <label for="r-obs">Observações</label>
+    <textarea id="r-obs" placeholder="Com comida? Guardar na geladeira? Quem receitou?">${esc(r.obs)}</textarea>
+    <div class="btn-linha"><button class="btn" onclick="salvarRemedio('${id||''}',event)">Salvar</button></div>
+    ${id?`<div class="btn-linha"><button class="btn claro" onclick="alarmeRemedio('${id}')">⏰ Criar alarmes no celular</button></div>
+    <p class="dica">Gera os alarmes na agenda do aparelho. Tocam com o app fechado e sem internet.</p>
+    <div class="btn-linha"><button class="btn perigo" onclick="apagar('remedios','${id}')">Apagar</button></div>`:''}`);
+  gradeHoras();
+}
+function salvarRemedio(id,ev){
+  if(!val('r-nome')) return aviso('Escreva o nome do remédio');
+  semTravar(Store.gravarItem('remedios', { id: id||uid(),
+    nome:val('r-nome'), dose:val('r-dose'), motivo:val('r-motivo'),
+    horarios: [...horas],
+    inicio:val('r-ini'), fim:val('r-fim'), obs:val('r-obs'), autor:meuNome() }));
+  fecharFolha(); comemora(ev,'Remédio salvo');
+}
+
+/* ---------- evento ---------- */
+function abrirEvento(id){
+  const e = db.eventos.find(x=>x.id===id) || {data:hojeISO(), tipo:'Pediatra'};
+  abrirFolha(`<h2>${id?'Compromisso':'Novo compromisso'}</h2>
+    <label for="e-titulo">O que é</label><input id="e-titulo" value="${esc(e.titulo)}" placeholder="Consulta de rotina">
+    <label for="e-tipo">Tipo</label>
+    <select id="e-tipo">${ESPECIALIDADES.map(x=>`<option ${e.tipo===x[0]?'selected':''}>${x[0]}</option>`).join('')}</select>
+    <div class="dupla">
+      <div><label for="e-data">Dia</label><input type="date" id="e-data" value="${esc(e.data)}"></div>
+      <div><label for="e-hora">Hora</label><input type="time" id="e-hora" value="${esc(e.hora)}"></div>
+    </div>
+    <label for="e-local">Onde</label><input id="e-local" value="${esc(e.local)}" placeholder="Endereço da clínica">
+    <label for="e-obs">Lembretes</label>
+    <textarea id="e-obs" placeholder="Levar carteirinha, ir em jejum, quem leva">${esc(e.obs)}</textarea>
+    <div class="btn-linha"><button class="btn" onclick="salvarEvento('${id||''}',event)">Salvar</button></div>
+    ${id?`<div class="btn-linha"><button class="btn claro" onclick="alarmeEvento('${id}')">⏰ Lembrar no celular</button></div>
+    <p class="dica">Cria o compromisso na agenda, com aviso na véspera e uma hora antes.</p>
+    <div class="btn-linha"><button class="btn perigo" onclick="apagar('eventos','${id}')">Apagar</button></div>`:''}`);
+}
+function salvarEvento(id,ev){
+  if(!val('e-titulo')) return aviso('Dê um nome ao compromisso');
+  semTravar(Store.gravarItem('eventos', { id: id||uid(),
+    titulo:val('e-titulo'), tipo:val('e-tipo'), data:val('e-data'), hora:val('e-hora'),
+    local:val('e-local'), obs:val('e-obs'), autor:meuNome() }));
+  fecharFolha(); comemora(ev,'Anotado na agenda');
+}
+
+function apagar(lista,id){
+  if(!confirm('Apagar este registro? Some dos dois celulares.')) return;
+  semTravar(Store.apagarItem(lista,id));
+  fecharFolha(); aviso('Apagado');
+}
+
+$('#btn-mais').onclick = ()=>{
+  if(telaAtual==='remedios') abrirRemedio();
+  else if(telaAtual==='agenda') abrirEvento();
+  else abrirConsulta();
+};
+
+/* ---------- backup, resumo, migração ---------- */
+function exportar(){
+  const nome=(db.perfil.nome||'caderneta').split(' ')[0].toLowerCase();
+  const blob=new Blob([JSON.stringify(db,null,1)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=`caderneta-${nome}-${hojeISO()}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+  aviso('Cópia baixada');
+}
+function copiarResumo(){
+  const p=db.perfil||{};
+  const ativos=db.remedios.filter(remedioAtivo);
+  const ult=[...db.consultas].sort((a,b)=>(b.data||'').localeCompare(a.data||'')).slice(0,3);
+  const txt=[
+    `${p.nome||'—'} — ${idade(p.nascimento)||'idade não informada'}`,
+    p.nascimento? `Nascimento: ${dataBR(p.nascimento)}`:'',
+    p.sangue? `Tipo sanguíneo: ${p.sangue}`:'',
+    `Alergias: ${p.alergias||'nenhuma conhecida'}`,
+    '', 'Em uso agora:',
+    ativos.length? ativos.map(r=>`- ${r.nome} ${r.dose||''} ${r.horarios?.length?'('+r.horarios.join(', ')+')':''}`).join('\n') : '- nenhum',
+    '', 'Últimas consultas:',
+    ult.length? ult.map(c=>`- ${dataBR(c.data)} ${c.especialidade}: ${c.conduta||c.motivo||''}`).join('\n') : '- nenhuma registrada',
+    p.obs? '\n'+p.obs : ''
+  ].filter(Boolean).join('\n');
+  navigator.clipboard.writeText(txt).then(()=>aviso('Resumo copiado'))
+    .catch(()=>abrirFolha(`<h2>Resumo</h2><textarea style="min-height:300px">${esc(txt)}</textarea>`));
+}
+function dadosAntigos(){
+  try{ const d=JSON.parse(localStorage.getItem('caderneta:v1')||'null');
+    return (d && ((d.consultas||[]).length || (d.remedios||[]).length || (d.eventos||[]).length)) ? d : null;
+  }catch(e){ return null; }
+}
+function verMigracao(){ $('#bloco-migrar').hidden = !dadosAntigos(); }
+$('#btn-migrar').onclick = async ()=>{
+  const d=dadosAntigos(); if(!d) return;
+  $('#btn-migrar').disabled = true;
+  try{
+    for(const lista of ['consultas','remedios','eventos'])
+      for(const item of (d[lista]||[])) await Store.gravarItem(lista, {...item, id:item.id||uid()});
+    for(const [k,v] of Object.entries(d.doses||{})) await Store.gravarDose(k,v);
+    if(d.perfil?.nome && !db.perfil.nome) await Store.gravarPerfil(d.perfil);
+    localStorage.removeItem('caderneta:v1');
+    verMigracao(); comemora(null,'Tudo na nuvem agora');
+  }catch(e){ aviso('Não consegui subir. Confira a internet.'); }
+  $('#btn-migrar').disabled = false;
+};
+
+/* =========================================================
+   AVISOS
+   Enquanto não existe push de verdade, isto cobre três casos:
+   remédio na hora, o outro anotou algo, e compromisso amanhã.
+   Só alcança o aparelho com o app aberto (mesmo em segundo plano).
+   ========================================================= */
+const podeAvisar = ()=> 'Notification' in window && Notification.permission==='granted';
+
+/* Guarda o endereço de push deste aparelho, pra o carteiro achar.
+   O id fica no localStorage: reinstalar não cria aparelho duplicado. */
+async function registrarAparelho(){
+  if(!podeAvisar() || Store.modo!=='nuvem') return;
+  try{
+    const token = await Store.ligarPush();
+    if(!token) return;
+    let id = localStorage.getItem('caderneta:aparelho');
+    if(!id){ id = uid(); localStorage.setItem('caderneta:aparelho', id); }
+    await Store.gravarItem('dispositivos', {
+      id, token, dono: Store.uid(), nome: meuNome(),
+      aparelho: (navigator.userAgent.match(/\((.*?)\)/)?.[1] || 'aparelho').slice(0,50)
+    });
+  }catch(e){ console.warn('push não ligou:', e.message); }
+}
+
+async function pedirAvisos(){
+  if(!('Notification' in window)) return aviso('Este navegador não tem avisos.');
+  if(Notification.permission==='granted') return aviso('Os avisos já estão ligados.');
+  if(Notification.permission==='denied')
+    return aviso('Você bloqueou os avisos. Libere nas permissões do site.');
+  const r = await Notification.requestPermission();
+  if(r==='granted') await registrarAparelho();
+  desenhar();
+  aviso(r==='granted' ? 'Avisos ligados 🔔' : 'Sem avisos por enquanto.');
+}
+
+async function notificar(titulo, corpo){
+  if(podeAvisar()){
+    try{
+      const reg = await navigator.serviceWorker?.ready;
+      // No Android o aviso precisa sair pelo service worker; na mão dá erro.
+      if(reg?.showNotification){
+        reg.showNotification(titulo, {body:corpo, icon:'./icon-192.png', badge:'./icon-192.png', tag:titulo});
+        return;
+      }
+      new Notification(titulo, {body:corpo, icon:'./icon-192.png'});
+      return;
+    }catch(e){ /* cai no aviso na tela */ }
+  }
+  aviso(corpo ? `${titulo} · ${corpo}` : titulo);
+}
+
+/* --- o outro anotou algo --- */
+const visto = {};
+function vigiar(parte){
+  if(!['consultas','remedios','eventos'].includes(parte)) return;
+  const atual = new Map(db[parte].map(x=>[x.id, x.updatedAt||'']));
+  if(!visto[parte]){ visto[parte] = atual; return; }   // primeira carga não avisa
+  const mudou = [];
+  atual.forEach((v,k)=>{ if(visto[parte].get(k)!==v) mudou.push(db[parte].find(x=>x.id===k)); });
+  visto[parte] = atual;
+  mudou.filter(x=>x && x.autor && x.autor!==meuNome()).forEach(x=>{
+    if(parte==='consultas') notificar(`${x.autor} anotou uma consulta`, `${x.especialidade} · ${dataBR(x.data)}`);
+    if(parte==='remedios')  notificar(`${x.autor} mexeu nos remédios`, x.nome||'');
+    if(parte==='eventos')   notificar(`${x.autor} mexeu na agenda`, `${x.titulo||''} · ${dataBR(x.data)}`);
+  });
+}
+
+/* --- hora do remédio --- */
+const jaAvisou = new Set();
+function olharDoses(){
+  const hoje = hojeISO(), d = new Date(), min = d.getHours()*60 + d.getMinutes();
+  db.remedios.filter(remedioAtivo).forEach(r=>(r.horarios||[]).forEach(x=>{
+    const [hh,mm] = x.split(':').map(Number);
+    const alvo = hh*60+mm, k = `${r.id}|${hoje}|${x}`;
+    if(min>=alvo && min<alvo+10 && !db.doses[k] && !jaAvisou.has(k)){
+      jaAvisou.add(k);
+      notificar(`Hora do remédio · ${x}`, `${r.nome}${r.dose? ' — '+r.dose : ''}`);
+    }
+  }));
+}
+setInterval(olharDoses, 60000);
+
+/* --- compromisso amanhã, uma vez por dia --- */
+function olharVespera(){
+  const amanha = new Date(Date.now()+86400000).toLocaleDateString('sv-SE');
+  const chave = 'caderneta:vespera:'+amanha;
+  if(localStorage.getItem(chave)) return;
+  const evs = db.eventos.filter(e=>e.data===amanha);
+  if(!evs.length) return;
+  localStorage.setItem(chave,'1');
+  notificar('Amanhã tem compromisso', evs.map(e=>e.titulo+(e.hora?' às '+e.hora:'')).join(' · '));
+}
+
+/* =========================================================
+   ALARME NO CELULAR (.ics)
+   O celular importa e o alarme passa a ser do sistema:
+   toca com o app fechado, sem internet e sem depender de push.
+   ========================================================= */
+const escIcs = t => String(t||'').replace(/\\/g,'\\\\').replace(/[,;]/g,m=>'\\'+m).replace(/\n/g,'\\n');
+const carimbo = ()=> new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+
+function baixarIcs(nome, texto){
+  const blob = new Blob([texto], {type:'text/calendar;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nome+'.ics';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+/* Horário "flutuante" de propósito: sem fuso, o celular usa a hora
+   local dele. É o certo pra remédio — 8h é 8h onde a criança estiver. */
+function alarmeRemedio(id){
+  const r = db.remedios.find(x=>x.id===id);
+  if(!r || !(r.horarios||[]).length) return aviso('Escolha os horários primeiro.');
+  const ini = (r.inicio||hojeISO()).replace(/-/g,'');
+  const ate = r.fim ? ';UNTIL='+r.fim.replace(/-/g,'')+'T235900' : '';
+  const L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Caderneta da Bia//PT-BR','CALSCALE:GREGORIAN'];
+  r.horarios.forEach((x,i)=>{
+    const [hh,mm] = x.split(':');
+    L.push('BEGIN:VEVENT',
+      `UID:rem-${r.id}-${i}@caderneta`,
+      `DTSTAMP:${carimbo()}`,
+      `DTSTART:${ini}T${hh}${mm}00`,
+      'DURATION:PT10M',
+      `RRULE:FREQ=DAILY${ate}`,
+      `SUMMARY:Remédio: ${escIcs(r.nome)}${r.dose? ' — '+escIcs(r.dose):''}`,
+      `DESCRIPTION:${escIcs([r.motivo && 'Para '+r.motivo, r.obs].filter(Boolean).join('. '))}`,
+      'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY',
+      `DESCRIPTION:Hora do remédio${db.perfil.nome? ' da '+escIcs(db.perfil.nome):''}`,
+      'END:VALARM','END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  baixarIcs('remedio-'+r.nome.toLowerCase().replace(/\W+/g,'-'), L.join('\r\n'));
+  aviso('Abra o arquivo pra o celular criar os alarmes');
+}
+
+function alarmeEvento(id){
+  const e = db.eventos.find(x=>x.id===id);
+  if(!e || !e.data) return aviso('Falta a data do compromisso.');
+  const dia = e.data.replace(/-/g,'');
+  const hora = (e.hora||'09:00').replace(':','');
+  const L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Caderneta da Bia//PT-BR','CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:evt-${e.id}@caderneta`,
+    `DTSTAMP:${carimbo()}`,
+    `DTSTART:${dia}T${hora}00`,
+    'DURATION:PT1H',
+    `SUMMARY:${escIcs(e.titulo)}${db.perfil.nome? ' — '+escIcs(db.perfil.nome):''}`,
+    `LOCATION:${escIcs(e.local)}`,
+    `DESCRIPTION:${escIcs(e.obs)}`,
+    // dois avisos: um na véspera de tarde, outro uma hora antes
+    'BEGIN:VALARM','TRIGGER:-P1DT3H','ACTION:DISPLAY',`DESCRIPTION:Amanhã: ${escIcs(e.titulo)}`,'END:VALARM',
+    'BEGIN:VALARM','TRIGGER:-PT1H','ACTION:DISPLAY',`DESCRIPTION:Daqui a 1 hora: ${escIcs(e.titulo)}`,'END:VALARM',
+    'END:VEVENT','END:VCALENDAR'];
+  baixarIcs('compromisso-'+e.data, L.join('\r\n'));
+  aviso('Abra o arquivo pra o celular criar o lembrete');
+}
+
+/* ---------- mimos ---------- */
+let tid;
+function aviso(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(tid); tid=setTimeout(()=>el.classList.remove('on'),2400); }
+function faiscas(ev,emos){
+  const x = ev?.clientX ?? innerWidth/2, y = ev?.clientY ?? innerHeight/2;
+  for(let i=0;i<7;i++){
+    const s=document.createElement('span');
+    s.className='faisca'; s.textContent=emos[i%emos.length];
+    s.style.left=x+'px'; s.style.top=y+'px';
+    s.style.setProperty('--dx',(Math.random()*120-60)+'px');
+    s.style.animationDelay=(i*.05)+'s';
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1350);
+  }
+}
+function comemora(ev,txt){ aviso(txt); faiscas(ev,['💜','⭐','✨','🎈']); }
+const verOffline = ()=> $('#offline').classList.toggle('on', !navigator.onLine);
+addEventListener('online', verOffline); addEventListener('offline', verOffline); verOffline();
+
+/* ---------- início ---------- */
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+mostrar('carregando');
+
+/* Módulo tem escopo próprio: o HTML não enxerga estas funções sem isto. */
+Object.assign(window, {
+  abrirPerfil, abrirContatos, abrirConsulta, abrirRemedio, abrirEvento,
+  salvarPerfil, salvarContatos, salvarConsulta, salvarRemedio, salvarEvento,
+  abrirMeuCadastro, salvarMeuCadastro,
+  escolherBicho, marcarDose, apagar, setFiltro, atalho,
+  tocarHora, somarHora, receita, pedirAvisos, alarmeRemedio, alarmeEvento,
+  exportar, copiarResumo, sairDaConta, fecharFolha
+});
+</script>
+</body>
+</html>
