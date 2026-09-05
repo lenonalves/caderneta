@@ -24,8 +24,8 @@ const VAPID = "BHHHDLU4p6VYhChnt4WgCX3ssX7gQp6Ln8AvFIqhuTUODpuZ_e4acNgPaZz-qFSr2
 const FAMILIA = 'nossa-filha';
 
 const CONFIGURADO = !!configuracao.apiKey && !!configuracao.projectId;
-const LISTAS = ['consultas', 'remedios', 'eventos', 'membros', 'dispositivos'];
-const vazio = () => ({ perfil: {}, consultas: [], remedios: [], eventos: [], membros: [], dispositivos: [], doses: {} });
+const LISTAS = ['consultas', 'remedios', 'eventos', 'membros', 'dispositivos', 'recados'];
+const vazio = () => ({ perfil: {}, consultas: [], remedios: [], eventos: [], membros: [], dispositivos: [], doses: {}, recados: [], anexos: [] });
 const agora = () => new Date().toISOString();
 
 /* =========================================================
@@ -62,7 +62,14 @@ function criarLocal() {
     },
     apagarItem(lista, id) { const db = ler(); db[lista] = db[lista].filter(x => x.id !== id); return grava(db, lista); },
     gravarDose(chave, valor) { const db = ler(); db.doses[chave] = { chave, ...valor }; return grava(db, 'doses'); },
-    apagarDose(chave) { const db = ler(); delete db.doses[chave]; return grava(db, 'doses'); }
+    apagarDose(chave) { const db = ler(); delete db.doses[chave]; return grava(db, 'doses'); },
+
+    /* Anexos ficam fora do `ouvir()` de propósito — são lidos só quando
+       o item dono é aberto, nunca despejados todos de uma vez. */
+    listarAnexos(dono) { return Promise.resolve(ler().anexos.filter(a => a.dono === dono)); },
+    salvarAnexo(anexo) { const db = ler(); db.anexos.push(anexo); return grava(db, 'anexos'); },
+    apagarAnexo(id) { const db = ler(); db.anexos = db.anexos.filter(a => a.id !== id); return grava(db, 'anexos'); },
+    apagarAnexosDe(dono) { const db = ler(); db.anexos = db.anexos.filter(a => a.dono !== dono); return grava(db, 'anexos'); }
   };
 }
 
@@ -77,7 +84,7 @@ async function criarNuvem() {
   const { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } = await import(`${BASE}/firebase-auth.js`);
   const {
     initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-    doc, collection, onSnapshot, setDoc, deleteDoc
+    doc, collection, onSnapshot, setDoc, deleteDoc, getDocs, query, where
   } = await import(`${BASE}/firebase-firestore.js`);
 
   const app = initializeApp(configuracao);
@@ -91,6 +98,13 @@ async function criarNuvem() {
   const raiz = doc(bd, 'familias', FAMILIA);
   const subcol = nome => collection(raiz, nome);
   const chaveOk = k => k.replace(/[\/\|:]/g, '_');   // id de documento não aceita "/"
+
+  /* Sob demanda: uma leitura só, não um listener. Abrir um recado ou
+     consulta não pode custar o mesmo que abrir o mural inteiro. */
+  const buscarAnexos = async dono => {
+    const s = await getDocs(query(subcol('anexos'), where('dono', '==', dono)));
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  };
 
   return {
     modo: 'nuvem',
@@ -140,7 +154,15 @@ async function criarNuvem() {
     },
     apagarItem(lista, id) { return deleteDoc(doc(subcol(lista), id)); },
     gravarDose(chave, valor) { return setDoc(doc(subcol('doses'), chaveOk(chave)), { chave, ...valor }); },
-    apagarDose(chave) { return deleteDoc(doc(subcol('doses'), chaveOk(chave))); }
+    apagarDose(chave) { return deleteDoc(doc(subcol('doses'), chaveOk(chave))); },
+
+    listarAnexos: buscarAnexos,
+    salvarAnexo(anexo) { const { id, ...resto } = anexo; return setDoc(doc(subcol('anexos'), id), resto); },
+    apagarAnexo(id) { return deleteDoc(doc(subcol('anexos'), id)); },
+    async apagarAnexosDe(dono) {
+      const lista = await buscarAnexos(dono);
+      await Promise.all(lista.map(a => deleteDoc(doc(subcol('anexos'), a.id))));
+    }
   };
 }
 

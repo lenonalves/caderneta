@@ -1,7 +1,8 @@
 # Caderneta
 
 Saúde da nossa filha em um lugar só: consultas por especialidade, remédios com horários,
-agenda de compromissos e uma carteirinha com alergias e tipo sanguíneo.
+agenda de compromissos, um mural de recados com fotos anexadas (receita, pedido de exame)
+e uma carteirinha com alergias e tipo sanguíneo.
 Os dois celulares veem a mesma coisa, ao vivo. Funciona offline e instala como app.
 
 ## Arquivos
@@ -13,6 +14,7 @@ Os dois celulares veem a mesma coisa, ao vivo. Funciona offline e instala como a
 | `firestore.rules` | quem pode ler e escrever — **cole no console do Firebase** |
 | `sw.js` | faz funcionar offline |
 | `manifest.json`, `icon-*.png` | o que transforma o site em app instalável |
+| `logo.png`, `logo-branco.png` | a marca, na tela de login e no topo da tela Hoje |
 
 ## 1. Criar o Firebase (uma vez só)
 
@@ -55,6 +57,8 @@ familias/nossa-filha          → perfil
   └ remedios/{id}
   └ eventos/{id}
   └ doses/{id}
+  └ recados/{id}
+  └ anexos/{id}                (fotos, ligadas a um recado ou consulta pelo campo "dono")
 ```
 
 Cada registro é um documento separado. Isso importa: se vocês dois salvarem
@@ -62,6 +66,9 @@ ao mesmo tempo, cada um grava no próprio documento e nada é sobrescrito.
 
 `Store.ouvir()` é o coração — ele não busca os dados uma vez, ele fica escutando.
 Qualquer mudança, de qualquer um dos dois, cai na função e redesenha a tela.
+A única exceção são os `anexos`: como são fotos, ficam de fora desse fluxo ao vivo
+e só são buscados quando você abre o recado ou a consulta dona delas — senão abrir
+o mural baixaria as fotos de todo mundo de uma vez.
 
 Offline, o Firestore grava no cache do próprio celular e sobe sozinho quando volta
 o sinal. Por isso as funções de salvar não usam `await`: esperar a confirmação do
@@ -74,10 +81,13 @@ sem cartão de crédito. Vocês dois devem fazer umas 30 escritas por mês.
 **Não migre pro plano Blaze** — é lá que existe risco de conta inesperada,
 e este app não precisa de nada que o Blaze ofereça.
 
+As fotos anexadas são o que mais consome desse 1 GiB (o resto do app é só texto).
+Cada uma sai comprimida com no máximo ~700 KB, então dá bem mais de mil fotos até
+chegar perto do limite — mas é o item pra ficar de olho se um dia o banco reclamar
+de espaço.
+
 ## Ideias pra próxima versão
 
-- Foto da receita e do pedido de exame (comprimida em base64 dentro do registro)
 - Carteira de vacinas com o calendário nacional pré-cadastrado
 - Curva de crescimento (peso e altura por consulta)
-- Notificação na hora do remédio
 - Exportar o histórico de uma especialidade em PDF pra levar impresso

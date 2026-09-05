@@ -71,6 +71,9 @@ sw.js
 manifest.json
 icon-192.png
 icon-512.png
+icon-maskable.png
+logo.png
+logo-branco.png
 firestore.rules
 GUIA.md
 COMO-USAR.md
@@ -475,8 +478,6 @@ Bloqueio de tela nos dois aparelhos protege mais que qualquer coisa do Firebase.
 
 Ideias já mapeadas para as próximas versões:
 
-- Foto da receita e do pedido de exame
 - Carteira de vacinas com o calendário nacional já pré-cadastrado
 - Curva de crescimento (peso e altura por consulta)
-- Aviso na hora do remédio
 - Exportar o histórico de uma especialidade em PDF, pra levar impresso
