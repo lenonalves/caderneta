@@ -11,7 +11,8 @@ service cloud.firestore {
 
     function somosNos() {
       return request.auth != null && request.auth.uid in [
-        'ldPv9ooTcOehxbY3HL3v8McgI0N2'
+        'ldPv9ooTcOehxbY3HL3v8McgI0N2',
+        'YQGrYoFg36aMItkRHk2mOqqjSlz1'
       ];
     }
 
@@ -30,6 +31,12 @@ service cloud.firestore {
       match /remedios/{doc}  { allow read, write: if somosNos(); }
       match /eventos/{doc}   { allow read, write: if somosNos(); }
       match /doses/{doc}     { allow read, write: if somosNos(); }
+      match /recados/{doc}   { allow read, write: if somosNos(); }
+
+      // Fotos de recados e consultas, em base64. Fica numa coleção à
+      // parte (o app só lê sob demanda, nunca junto com o resto) pra
+      // abrir o mural não custar o download de todas as fotos de uma vez.
+      match /anexos/{doc} { allow read, write: if somosNos(); }
 
       // Endereço de push de cada aparelho. Só vocês dois escrevem.
       match /dispositivos/{doc} { allow read, write: if somosNos(); }
@@ -39,8 +46,8 @@ service cloud.firestore {
       // servidor, que passa por fora das regras.
 
       // Sem regra curinga aqui de propósito: se um dia a gente criar
-      // uma coleção nova (anexos, vacinas), ela precisa ser liberada
-      // aqui explicitamente. Assim nada nasce aberto por descuido.
+      // uma coleção nova (vacinas, por exemplo), ela precisa ser
+      // liberada aqui explicitamente. Assim nada nasce aberto por descuido.
     }
   }
 }

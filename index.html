@@ -41,19 +41,6 @@ body{
 h1,h2,h3,.display{font-family:"Baloo 2",cursive;font-weight:800;letter-spacing:.1px;margin:0;line-height:1.15}
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{cursor:pointer;border:none;background:none;padding:0}
-/* O Chrome pinta um retângulo azul em tudo que é clicável no celular, e
-   segurar o dedo seleciona o texto de dentro. Como quase toda a tela é
-   botão, isso aparecia o tempo todo. Os campos de texto ficam de fora:
-   lá a seleção tem que continuar funcionando. */
-button, .aba, .carteirinha, .card.link, .filtro, .hora, .atalho, .receita, .mais, .eu, a{
-  -webkit-tap-highlight-color:transparent;
-  -webkit-touch-callout:none;
-}
-button, .aba, .carteirinha, .card.link, .filtro, .hora, .atalho, .receita{
-  -webkit-user-select:none;
-  user-select:none;
-}
-input, textarea, select{-webkit-user-select:auto;user-select:auto}
 svg{display:block}
 
 .wrap{max-width:520px;margin:0 auto;padding:0 16px}
@@ -73,6 +60,8 @@ svg{display:block}
 .saudacao p{margin:3px 0 0;color:var(--tinta2);font-size:14px;font-weight:600;text-transform:lowercase}
 
 .titulo-tela{font-size:27px;margin:22px 2px 16px}
+.topo-tela{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topo-tela .titulo-tela{margin:22px 0 16px}
 
 /* ---------- carteirinha (elemento assinatura) ---------- */
 .carteirinha{
@@ -160,6 +149,7 @@ svg{display:block}
 }
 .card.link{width:100%;text-align:left;display:block;transition:transform .15s}
 .card.link:active{transform:scale(.978)}
+.card.fixado{border:2px solid #FFDE94;background:#FFFDF6;box-shadow:0 3px 0 -1px rgba(192,139,20,.3),0 12px 20px -16px rgba(70,52,81,.55)}
 .card h3{font-size:16.5px}
 .card .sub{color:var(--tinta2);font-size:13.5px;font-weight:600;margin-top:3px}
 .card .corpo{font-size:14.5px;line-height:1.55;margin-top:10px;white-space:pre-wrap}
@@ -255,6 +245,25 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 .dupla>div{flex:1}
 .dica{font-size:12.5px;color:var(--tinta2);margin:6px 2px 0;line-height:1.45}
 
+/* ---------- interruptor (toggle de verdade, não caixinha) ---------- */
+.linha-interruptor{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:16px 0 6px}
+.linha-interruptor label{margin:0}
+.interruptor{width:50px;height:30px;flex:0 0 50px;border-radius:999px;background:var(--linha);position:relative;transition:background .2s}
+.interruptor::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(70,52,81,.25);transition:transform .2s cubic-bezier(.3,1.3,.4,1)}
+.interruptor[aria-pressed="true"]{background:var(--menta)}
+.interruptor[aria-pressed="true"]::after{transform:translateX(20px)}
+
+/* ---------- fotos anexadas ---------- */
+.anexos{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 4px}
+.anexo{position:relative;width:72px;height:72px}
+.anexo-foto{width:100%;height:100%;border-radius:15px;background-size:cover;background-position:center;border:2px solid var(--linha);transition:transform .15s}
+.anexo-foto:active{transform:scale(.94)}
+.anexo-apagar{position:absolute;top:-6px;right:-6px;width:23px;height:23px;border-radius:50%;background:var(--tinta);color:#fff;display:grid;place-items:center;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.anexo-apagar svg{width:11px;height:11px;stroke-width:2.6}
+.visor{position:fixed;inset:0;z-index:90;background:rgba(20,14,24,.94);display:grid;place-items:center;padding:22px}
+.visor[hidden]{display:none}
+.visor img{max-width:100%;max-height:100%;border-radius:16px}
+
 /* ---------- porta: login, carregando, erro ---------- */
 .porta{position:fixed;inset:0;z-index:80;background:var(--papel);display:grid;place-items:center;padding:24px}
 .porta[hidden]{display:none}
@@ -339,7 +348,7 @@ addEventListener('unhandledrejection', function(e){
     <div class="hero">
       <div class="topo">
         <img class="marca" src="./logo-branco.png" alt="Bia">
-        <button class="eu" id="eu-marca" onclick="abrirMeuCadastro()">·</button>
+        <button class="eu avatar-topo" id="eu-marca" onclick="ir('ajustes')" aria-label="Ajustes">·</button>
       </div>
       <div class="saudacao">
         <h1 id="saudacao-txt">Oi</h1>
@@ -350,6 +359,11 @@ addEventListener('unhandledrejection', function(e){
     <button class="carteirinha" id="carteirinha"></button>
 
     <div class="atalhos" id="atalhos"></div>
+
+    <div class="bloco" id="bloco-naoesquecer" hidden>
+      <div class="bloco-cab"><h2>Não esquecer</h2><button class="acao" data-ir="mural">ver mural</button></div>
+      <div id="naoesquecer"></div>
+    </div>
 
     <div class="bloco">
       <div class="bloco-cab"><h2>Remédios de hoje</h2><span id="dose-anel"></span></div>
@@ -370,21 +384,28 @@ addEventListener('unhandledrejection', function(e){
 
   <!-- ============ CONSULTAS ============ -->
   <section class="tela" id="tela-consultas">
-    <h1 class="titulo-tela">Consultas</h1>
+    <div class="topo-tela"><h1 class="titulo-tela">Consultas</h1><button class="eu avatar-topo" onclick="ir('ajustes')" aria-label="Ajustes">·</button></div>
     <div class="filtros" id="filtros-esp"></div>
     <div id="lista-consultas"></div>
   </section>
 
   <!-- ============ REMÉDIOS ============ -->
   <section class="tela" id="tela-remedios">
-    <h1 class="titulo-tela">Remédios</h1>
+    <div class="topo-tela"><h1 class="titulo-tela">Remédios</h1><button class="eu avatar-topo" onclick="ir('ajustes')" aria-label="Ajustes">·</button></div>
     <div id="lista-remedios"></div>
   </section>
 
   <!-- ============ AGENDA ============ -->
   <section class="tela" id="tela-agenda">
-    <h1 class="titulo-tela">Agenda</h1>
+    <div class="topo-tela"><h1 class="titulo-tela">Agenda</h1><button class="eu avatar-topo" onclick="ir('ajustes')" aria-label="Ajustes">·</button></div>
     <div id="lista-agenda"></div>
+  </section>
+
+  <!-- ============ MURAL ============ -->
+  <section class="tela" id="tela-mural">
+    <div class="topo-tela"><h1 class="titulo-tela">Mural</h1><button class="eu avatar-topo" onclick="ir('ajustes')" aria-label="Ajustes">·</button></div>
+    <div class="filtros" id="filtros-mural"></div>
+    <div id="lista-mural"></div>
   </section>
 
   <!-- ============ AJUSTES ============ -->
@@ -466,12 +487,13 @@ addEventListener('unhandledrejection', function(e){
     <svg viewBox="0 0 24 24"><rect x="2.6" y="8.4" width="18.8" height="7.2" rx="3.6" transform="rotate(-42 12 12)"/><path d="M9.1 9.1 15 15"/></svg>Remédios</button>
   <button class="aba" data-tela="agenda">
     <svg viewBox="0 0 24 24"><rect x="3.8" y="5.6" width="16.4" height="14.8" rx="3"/><path d="M3.8 10.2h16.4M8.4 3.4v4M15.6 3.4v4"/></svg>Agenda</button>
-  <button class="aba" data-tela="ajustes">
-    <svg viewBox="0 0 24 24"><path d="M4.5 7.5h15M4.5 16.5h15"/><circle cx="9.5" cy="7.5" r="2.3"/><circle cx="15" cy="16.5" r="2.3"/></svg>Ajustes</button>
+  <button class="aba" data-tela="mural">
+    <svg viewBox="0 0 24 24"><path d="M12 21s-6.4-6.2-6.4-11A6.4 6.4 0 0 1 18.4 10c0 4.8-6.4 11-6.4 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Mural</button>
 </nav>
 
 <div class="fundo" id="fundo"></div>
 <div class="folha" id="folha"><div class="puxador"></div><div id="folha-conteudo"></div></div>
+<div class="visor" id="visor-foto" hidden onclick="fecharFoto()"><img id="visor-img" src="" alt="Foto"></div>
 <div id="toast"></div>
 
 <script type="module">
@@ -483,8 +505,10 @@ const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const agora = ()=> new Date().toISOString();
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-let db = { perfil:{}, consultas:[], remedios:[], eventos:[], membros:[], doses:{} };
+let db = { perfil:{}, consultas:[], remedios:[], eventos:[], membros:[], doses:{}, recados:[] };
 let usuario = null, ouvindo = false, carregou = false, perguntou = false;
+let filtroMural = 'Tudo', etiquetaAtual = 'Outro';
+let anexoDonoAtual = null, anexosAtual = [];
 
 const eu = ()=> db.membros.find(m => m.id === Store.uid()) || {};
 const meuNome = ()=> eu().apelido || (usuario?.email || '').split('@')[0];
@@ -509,7 +533,12 @@ const D = {
   calendario:'<rect x="3.8" y="5.6" width="16.4" height="14.8" rx="3"/><path d="M3.8 10.2h16.4M8.4 3.4v4M15.6 3.4v4"/>',
   broto:'<path d="M12 20.4v-7"/><path d="M12 14.4c-3.4 0-5.6-2-5.6-5 3.4 0 5.6 2 5.6 5zM12 12.6c0-3 2.2-5 5.6-5 0 3-2.2 5-5.6 5z"/>',
   balao:'<path d="M12 15.4c3 0 5.2-2.7 5.2-6S15 3.6 12 3.6 6.8 6.1 6.8 9.4s2.2 6 5.2 6z"/><path d="M12 15.4v1.4M10.8 18.2c1.4.6 1 2.2-.8 2.2"/>',
-  pessoa:'<circle cx="12" cy="8.4" r="3.7"/><path d="M5.4 20.4a6.6 6.6 0 0 1 13.2 0"/>'
+  pessoa:'<circle cx="12" cy="8.4" r="3.7"/><path d="M5.4 20.4a6.6 6.6 0 0 1 13.2 0"/>',
+  sapatilha:'<path d="M3.6 16.8c0-2.6 2.8-3.6 6.4-5 3.6-1.4 6.6-2.6 8.4-2 1.2.4 1.4 1.5.4 2.4-1.4 1.3-4.4 1.8-6.8 2.6-2.6.9-3.8 2.4-3.8 3.8 0 1.1-1 2-2.3 2s-2.3-1.7-2.3-3.8z"/><path d="M7.6 15.4c1.6.8 3.4.7 5-.2"/>',
+  mochila:'<rect x="5.6" y="9.2" width="12.8" height="11.6" rx="3.4"/><path d="M8 9.2V7a4 4 0 0 1 8 0v2.2"/><path d="M9.4 9.2v3.4h5.2V9.2M9.8 15.8h4.4"/>',
+  alfinete:'<path d="M12 21s-6.4-6.2-6.4-11A6.4 6.4 0 0 1 18.4 10c0 4.8-6.4 11-6.4 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  camera:'<rect x="3.2" y="7.4" width="17.6" height="12.2" rx="3"/><path d="M8.6 7.4 10 5h4l1.4 2.4"/><circle cx="12" cy="13.4" r="3.3"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>'
 };
 const ico = (n, cls='ic') => `<svg viewBox="0 0 24 24" class="${cls}">${D[n]||D.estrela}</svg>`;
 
@@ -522,6 +551,17 @@ const ESPECIALIDADES = [
 const espInfo = n => ESPECIALIDADES.find(e=>e[0]===n) || ESPECIALIDADES.at(-1);
 const tinta = hex => hex+'22';
 const PARENTESCOS = ['Pai','Mãe','Avó','Avô','Madrasta','Padrasto','Responsável'];
+
+const ETIQUETAS = [
+  ['Balé','sapatilha','#D77FC2'], ['Escola','mochila','#4FA9E0'],
+  ['Saúde','coracao','#3EB894'], ['Outro','estrela','#9B8FD8']
+];
+const etiquetaInfo = n => ETIQUETAS.find(e=>e[0]===n) || ETIQUETAS.at(-1);
+
+/* Teto do tamanho (em caracteres, ~= bytes) do texto base64 de uma foto.
+   O Firestore recusa documento acima de 1 MiB, e base64 já engorda a
+   imagem original em ~33% — por isso a folga bem abaixo do limite. */
+const TETO_ANEXO = 700000;
 
 const hojeISO = ()=> new Date().toLocaleDateString('sv-SE');
 function dataBR(iso){ if(!iso) return ''; const [a,m,d]=iso.split('-'); return `${d}/${m}/${a}`; }
@@ -609,11 +649,13 @@ $$('.aba').forEach(b=>b.onclick=()=>ir(b.dataset.tela));
 $$('[data-ir]').forEach(b=>b.onclick=()=>ir(b.dataset.ir));
 
 function desenhar(){
-  if(telaAtual==='hoje'){ desenhaSaudacao(); desenhaAtalhos(); desenhaCarteirinha(); desenhaDoses(); desenhaProximos(); desenhaUltima(); }
+  if(telaAtual==='hoje'){ desenhaSaudacao(); desenhaAtalhos(); desenhaCarteirinha(); desenhaNaoEsquecer(); desenhaDoses(); desenhaProximos(); desenhaUltima(); }
   if(telaAtual==='consultas'){ desenhaFiltros(); desenhaConsultas(); }
   if(telaAtual==='remedios') desenhaRemedios();
   if(telaAtual==='agenda') desenhaAgenda();
+  if(telaAtual==='mural'){ desenhaFiltrosMural(); desenhaMural(); }
   if(telaAtual==='ajustes'){ $('#aj-nome').textContent = db.perfil.nome ? 'Dados da '+db.perfil.nome : 'Dados dela'; desenhaMembros(); desenhaAvisos(); }
+  $$('.avatar-topo').forEach(b=>b.textContent = iniciais(meuNome() || usuario?.email || '?'));
 }
 
 function desenhaAtalhos(){
@@ -629,7 +671,6 @@ function desenhaSaudacao(){
   const quem = eu().apelido;
   $('#saudacao-txt').textContent = quem ? `${parte}, ${quem}` : parte;
   $('#saudacao-data').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long', day:'numeric', month:'long'});
-  $('#eu-marca').textContent = iniciais(quem || usuario?.email || '?');
 }
 
 /* ---------- carteirinha ---------- */
@@ -654,6 +695,26 @@ function desenhaCarteirinha(){
     ${chips.length? '<hr class="picotado"><div class="chips">'+chips.join('')+'</div>' : ''}`;
 }
 $('#carteirinha').onclick = ()=>abrirPerfil();
+
+/* ---------- mural de recados ---------- */
+function cardRecado(r){
+  const [,nome,cor] = etiquetaInfo(r.etiqueta);
+  return `<button class="card link ${r.importante?'fixado':''}" onclick="abrirRecado('${r.id}')">
+    <div class="linha-topo">
+      <div class="bolinha" style="background:${tinta(cor)};color:${cor}">${ico(nome)}</div>
+      <div style="flex:1">
+        <h3>${esc(r.titulo)}</h3>
+        <div class="sub">${esc(r.etiqueta)} · ${dataBR(r.data)}${r.autor? ' · '+esc(r.autor):''}</div>
+      </div>
+      ${r.importante? `<div class="bolinha" style="background:#FDF0D2;color:#C08B14;flex:0 0 34px;width:34px;height:34px">${ico('alfinete','ic mini')}</div>` : ''}
+    </div>
+    ${r.texto? `<div class="corpo">${esc(r.texto)}</div>`:''}</button>`;
+}
+function desenhaNaoEsquecer(){
+  const imp = (db.recados||[]).filter(r=>r.importante).sort((a,b)=>(b.data||'').localeCompare(a.data||''));
+  $('#bloco-naoesquecer').hidden = !imp.length;
+  if(imp.length) $('#naoesquecer').innerHTML = imp.map(cardRecado).join('');
+}
 
 /* ---------- doses ---------- */
 function desenhaDoses(){
@@ -792,6 +853,27 @@ function desenhaAgenda(){
       : `<div class="vazio"><div class="ilustra">${ico('calendario')}</div><p>Agenda livre.</p>
          <button class="btn claro" onclick="abrirEvento()">Marcar compromisso</button></div>`)
     + (pas.length? `<div class="bloco"><div class="bloco-cab"><h2>Já passou</h2></div>${pas.slice(0,10).map(cardEvento).join('')}</div>`:'');
+}
+
+function setFiltroMural(f){ filtroMural=f; desenhaFiltrosMural(); desenhaMural(); }
+function desenhaFiltrosMural(){
+  const temImportante = (db.recados||[]).some(r=>r.importante);
+  const opcoes = ['Tudo', ...(temImportante? ['Importantes']:[]), ...ETIQUETAS.map(e=>e[0])];
+  $('#filtros-mural').innerHTML = opcoes.map(f=>{
+    const rotulo = f==='Tudo' ? f
+      : f==='Importantes' ? `<span style="display:inline-flex;align-items:center;gap:6px;vertical-align:-4px">${ico('alfinete','ic mini')}${f}</span>`
+      : `<span style="display:inline-flex;align-items:center;gap:6px;vertical-align:-4px">${ico(etiquetaInfo(f)[1],'ic mini')}${f}</span>`;
+    return `<button class="filtro" aria-pressed="${filtroMural===f}" onclick="setFiltroMural('${f}')">${rotulo}</button>`;
+  }).join('');
+}
+function desenhaMural(){
+  let l = [...(db.recados||[])];
+  if(filtroMural==='Importantes') l = l.filter(r=>r.importante);
+  else if(filtroMural!=='Tudo') l = l.filter(r=>r.etiqueta===filtroMural);
+  l.sort((a,b)=> (Number(!!b.importante)-Number(!!a.importante)) || (b.data||'').localeCompare(a.data||''));
+  $('#lista-mural').innerHTML = l.length? l.map(cardRecado).join('')
+    : `<div class="vazio"><div class="ilustra">${ico('alfinete')}</div><p>Nenhum recado por aqui ainda.</p>
+       <button class="btn claro" onclick="abrirRecado()">Escrever o primeiro</button></div>`;
 }
 
 /* ---------- membros ---------- */
@@ -935,6 +1017,8 @@ function salvarContatos(ev){
 /* ---------- consulta ---------- */
 function abrirConsulta(id){
   const c = db.consultas.find(x=>x.id===id) || {data:hojeISO(), especialidade:'Pediatra'};
+  anexoDonoAtual = id ? 'consulta:'+id : null;
+  anexosAtual = [];
   abrirFolha(`<h2>${id?'Consulta':'Nova consulta'}</h2>
     <label for="c-esp">Especialidade</label>
     <select id="c-esp">${ESPECIALIDADES.map(e=>`<option ${c.especialidade===e[0]?'selected':''}>${e[0]}</option>`).join('')}</select>
@@ -948,8 +1032,10 @@ function abrirConsulta(id){
     <textarea id="c-conduta" placeholder="Diagnóstico, receita, orientações, exames pedidos">${esc(c.conduta)}</textarea>
     <label for="c-retorno">Retorno marcado</label><input type="date" id="c-retorno" value="${esc(c.retorno)}">
     <p class="dica">Se preencher, vira um compromisso na agenda automaticamente.</p>
+    ${blocoAnexos(id, 'Receita e pedido de exame')}
     <div class="btn-linha"><button class="btn" onclick="salvarConsulta('${id||''}',event)">Salvar</button></div>
     ${id?`<div class="btn-linha"><button class="btn perigo" onclick="apagar('consultas','${id}')">Apagar</button></div>`:''}`);
+  if(id) carregarAnexos(anexoDonoAtual);
 }
 function salvarConsulta(id,ev){
   if(!val('c-data')) return aviso('Escolha a data da consulta');
@@ -1066,15 +1152,142 @@ function salvarEvento(id,ev){
   fecharFolha(); comemora(ev,'Anotado na agenda');
 }
 
+/* ---------- recado ---------- */
+function desenhaEtiquetas(){
+  $('#etq-escolha').innerHTML = ETIQUETAS.map(e=>
+    `<button type="button" class="filtro" aria-pressed="${etiquetaAtual===e[0]}" onclick="escolherEtiqueta('${e[0]}')">
+      <span style="display:inline-flex;align-items:center;gap:6px;vertical-align:-4px">${ico(e[1],'ic mini')}${e[0]}</span></button>`).join('');
+}
+function escolherEtiqueta(e){ etiquetaAtual=e; desenhaEtiquetas(); }
+function alternarImportante(btn){ btn.setAttribute('aria-pressed', btn.getAttribute('aria-pressed')!=='true'); }
+
+function abrirRecado(id){
+  const r = db.recados.find(x=>x.id===id) || {data:hojeISO(), etiqueta:'Outro', importante:false};
+  etiquetaAtual = r.etiqueta;
+  anexoDonoAtual = id ? 'recado:'+id : null;
+  anexosAtual = [];
+  abrirFolha(`<h2>${id?'Recado':'Novo recado'}</h2>
+    <label for="rc-titulo">Título</label><input id="rc-titulo" value="${esc(r.titulo)}" placeholder="Apresentação do balé">
+    <label>Etiqueta</label>
+    <div class="filtros" style="padding-bottom:4px" id="etq-escolha"></div>
+    <label for="rc-texto">Recado</label>
+    <textarea id="rc-texto" placeholder="O que precisa ficar combinado">${esc(r.texto)}</textarea>
+    <label for="rc-data">Data</label><input type="date" id="rc-data" value="${esc(r.data)}">
+    <div class="linha-interruptor">
+      <div><label>Marcar como importante</label><div class="dica" style="margin:2px 0 0">Fica fixado no topo do mural e aparece na tela Hoje, no bloco "Não esquecer".</div></div>
+      <button type="button" class="interruptor" id="rc-importante" aria-pressed="${r.importante?'true':'false'}" onclick="alternarImportante(this)"></button>
+    </div>
+    ${blocoAnexos(id)}
+    <div class="btn-linha"><button class="btn" onclick="salvarRecado('${id||''}',event)">Salvar</button></div>
+    ${id?`<div class="btn-linha"><button class="btn perigo" onclick="apagar('recados','${id}')">Apagar</button></div>`:''}`);
+  desenhaEtiquetas();
+  if(id) carregarAnexos(anexoDonoAtual);
+}
+function salvarRecado(id,ev){
+  if(!val('rc-titulo')) return aviso('Dê um título ao recado');
+  const dados = { id: id||uid(), titulo:val('rc-titulo'), texto:val('rc-texto'), etiqueta:etiquetaAtual,
+    data:val('rc-data')||hojeISO(), importante: $('#rc-importante').getAttribute('aria-pressed')==='true', autor:meuNome() };
+  semTravar(Store.gravarItem('recados', dados));
+  fecharFolha(); comemora(ev,'Recado guardado');
+}
+
+/* ---------- fotos anexadas (recados e consultas) ----------
+   Ficam numa coleção à parte, lida só quando o item é aberto — não
+   dá pra deixar isso no fluxo em tempo real de `db`, senão abrir o
+   mural baixaria todas as fotos de uma vez. */
+const DONO_ANEXO = { consultas:'consulta', recados:'recado' };
+
+function blocoAnexos(id, rotulo='Fotos'){
+  if(!id) return `<p class="dica" style="margin-top:16px">Salve primeiro pra poder anexar fotos.</p>`;
+  return `<label>${rotulo}</label>
+    <div class="anexos" id="lista-anexos"></div>
+    <input type="file" accept="image/*" id="anexo-arquivo" hidden onchange="enviarAnexo(event)">
+    <button type="button" class="btn claro" style="width:auto;padding:11px 18px;display:inline-flex;gap:8px" onclick="document.getElementById('anexo-arquivo').click()">${ico('camera','ic mini')}Adicionar foto</button>
+    <p class="dica">Guardada comprimida, pronta pra mostrar no consultório.</p>`;
+}
+async function carregarAnexos(dono){
+  anexosAtual = await Store.listarAnexos(dono).catch(()=>[]);
+  desenhaAnexos();
+}
+function desenhaAnexos(){
+  const cont = $('#lista-anexos'); if(!cont) return;
+  cont.innerHTML = anexosAtual.map(a=>`
+    <div class="anexo">
+      <button type="button" class="anexo-foto" onclick="verFoto('${a.id}')" aria-label="Ver foto" style="background-image:url('${a.miniatura}')"></button>
+      <button type="button" class="anexo-apagar" onclick="apagarAnexo('${a.id}')" aria-label="Apagar foto">${ico('x')}</button>
+    </div>`).join('');
+}
+function enviarAnexo(ev){
+  const arquivo = ev.target.files[0]; ev.target.value='';
+  if(!arquivo) return;
+  if(!arquivo.type.startsWith('image/')) return aviso('Escolha uma imagem.');
+  aviso('Comprimindo a foto…');
+  Promise.all([comprimirAdaptativo(arquivo), comprimirMiniatura(arquivo)])
+    .then(([imagem,miniatura])=>{
+      const anexo = { id:uid(), dono:anexoDonoAtual, imagem, miniatura, autor:meuNome() };
+      anexosAtual = [...anexosAtual, anexo]; desenhaAnexos();
+      semTravar(Store.salvarAnexo(anexo));
+      aviso('Foto guardada');
+    })
+    .catch(()=>aviso('Não consegui ler essa imagem.'));
+}
+function apagarAnexo(id){
+  if(!confirm('Apagar esta foto?')) return;
+  semTravar(Store.apagarAnexo(id));
+  anexosAtual = anexosAtual.filter(a=>a.id!==id);
+  desenhaAnexos();
+}
+function verFoto(id){
+  const a = anexosAtual.find(x=>x.id===id); if(!a) return;
+  $('#visor-img').src = a.imagem; $('#visor-foto').hidden = false;
+}
+function fecharFoto(){ $('#visor-foto').hidden = true; $('#visor-img').src=''; }
+
+/* Reduz por canvas e devolve um data URL JPEG. */
+function comprimirImagem(arquivo, lado, qualidade){
+  return new Promise((resolve,reject)=>{
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const escala = Math.min(1, lado/Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width*escala); c.height = Math.round(img.height*escala);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL('image/jpeg', qualidade));
+      };
+      img.onerror = () => reject(new Error('imagem inválida'));
+      img.src = leitor.result;
+    };
+    leitor.onerror = () => reject(new Error('falha ao ler o arquivo'));
+    leitor.readAsDataURL(arquivo);
+  });
+}
+/* Passos cada vez mais agressivos até caber no teto do Firestore.
+   Foto de celular novo passa de 5 MB — sem isso o banco recusa
+   o documento e a pessoa vê um erro sem explicação nenhuma. */
+async function comprimirAdaptativo(arquivo){
+  const passos = [[1600,.75],[1200,.65],[900,.55],[700,.45],[500,.4]];
+  let ultima;
+  for(const [lado,qualidade] of passos){
+    ultima = await comprimirImagem(arquivo, lado, qualidade);
+    if(ultima.length <= TETO_ANEXO) return ultima;
+  }
+  return ultima;
+}
+const comprimirMiniatura = arquivo => comprimirImagem(arquivo, 160, .6);
+
 function apagar(lista,id){
   if(!confirm('Apagar este registro? Some dos dois celulares.')) return;
   semTravar(Store.apagarItem(lista,id));
+  if(DONO_ANEXO[lista]) semTravar(Store.apagarAnexosDe(`${DONO_ANEXO[lista]}:${id}`));
   fecharFolha(); aviso('Apagado');
 }
 
 $('#btn-mais').onclick = ()=>{
   if(telaAtual==='remedios') abrirRemedio();
   else if(telaAtual==='agenda') abrirEvento();
+  else if(telaAtual==='mural') abrirRecado();
   else abrirConsulta();
 };
 
@@ -1179,7 +1392,7 @@ async function notificar(titulo, corpo){
 /* --- o outro anotou algo --- */
 const visto = {};
 function vigiar(parte){
-  if(!['consultas','remedios','eventos'].includes(parte)) return;
+  if(!['consultas','remedios','eventos','recados'].includes(parte)) return;
   const atual = new Map(db[parte].map(x=>[x.id, x.updatedAt||'']));
   if(!visto[parte]){ visto[parte] = atual; return; }   // primeira carga não avisa
   const mudou = [];
@@ -1189,6 +1402,7 @@ function vigiar(parte){
     if(parte==='consultas') notificar(`${x.autor} anotou uma consulta`, `${x.especialidade} · ${dataBR(x.data)}`);
     if(parte==='remedios')  notificar(`${x.autor} mexeu nos remédios`, x.nome||'');
     if(parte==='eventos')   notificar(`${x.autor} mexeu na agenda`, `${x.titulo||''} · ${dataBR(x.data)}`);
+    if(parte==='recados')   notificar(`${x.autor} deixou um recado`, x.titulo||'');
   });
 }
 
@@ -1306,12 +1520,14 @@ mostrar('carregando');
 
 /* Módulo tem escopo próprio: o HTML não enxerga estas funções sem isto. */
 Object.assign(window, {
-  abrirPerfil, abrirContatos, abrirConsulta, abrirRemedio, abrirEvento,
+  ir, abrirPerfil, abrirContatos, abrirConsulta, abrirRemedio, abrirEvento,
   salvarPerfil, salvarContatos, salvarConsulta, salvarRemedio, salvarEvento,
   abrirMeuCadastro, salvarMeuCadastro,
   escolherBicho, marcarDose, apagar, setFiltro, atalho,
   tocarHora, somarHora, receita, pedirAvisos, alarmeRemedio, alarmeEvento,
-  exportar, copiarResumo, sairDaConta, fecharFolha
+  exportar, copiarResumo, sairDaConta, fecharFolha,
+  abrirRecado, salvarRecado, escolherEtiqueta, alternarImportante, setFiltroMural,
+  enviarAnexo, apagarAnexo, verFoto, fecharFoto
 });
 </script>
 </body>
