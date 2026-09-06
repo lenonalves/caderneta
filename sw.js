@@ -1,5 +1,5 @@
 // Troque a versão sempre que atualizar o app, pro celular pegar a versão nova.
-const VERSAO = 'caderneta-v8';
+const VERSAO = 'caderneta-v9';
 const ARQUIVOS = [
   './', './index.html', './store-firestore.js',
   './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable.png', './logo.png', './logo-branco.png'

@@ -103,6 +103,41 @@ no bloco "Não esquecer" da tela Hoje, acima dos remédios — esse bloco (`dese
 quando não há nenhum recado importante. O filtro do mural por etiqueta é sempre visível; o filtro
 "Importantes" só aparece quando existe pelo menos um recado marcado assim (`desenhaFiltrosMural()`).
 
+### Sistema visual (cores, ícones, marca)
+
+Os tokens de cor ficam em `:root` no `<style>`. `--lavanda` e `--tinta2` foram calibrados para passar
+WCAG AA (contraste ≥4.5:1) em todo uso real como texto ou texto-sobre-fundo — foram medidos com a fórmula de
+luminância relativa do WCAG, não escolhidos de olho. Ao trocar qualquer cor usada como texto ou como fundo
+por trás de texto, meça o contraste antes de assumir que "parece dar" — tons pastel bonitos no editor
+frequentemente falham em contraste sob luz de sol ou pra quem tem baixa visão, o público real deste app
+(cuidadores, às vezes avós).
+
+**Armadilha de escopo já corrigida uma vez, não reintroduzir**: existe `.eu{...}` (estilo base do botão-avatar
+redondo, fundo `--lavanda` sólido) e `.hero .eu{...}` (variante translúcida, só para quando o botão está
+dentro do cabeçalho colorido `.hero`, na tela Hoje). Antes de existir mais de um botão `.eu` no app, alguém
+escreveu a variante translúcida sem o prefixo `.hero `, e como só havia um `.eu` (dentro do hero) isso nunca
+deu problema — até o Mural adicionar o botão de Ajustes (`.avatar-topo`) no topo de Consultas/Remédios/
+Agenda/Mural, fora do hero: eles ficaram brancos sobre fundo quase branco, invisíveis. Qualquer nova regra
+CSS pensada para "só dentro do cabeçalho colorido" precisa do seletor `.hero ` explícito — testar essa
+suposição com uma captura de tela real (não só ler o CSS) é o que pegou esse bug.
+
+Ícones são todos SVG de um traço só, desenhados à mão no dicionário `D` dentro do `<script type="module">`
+(função `ico(nome, classe)`), grade 24×24, mesmo `stroke-width`. Emoji nativo do sistema (🩸⚠️💳📍🔁) foi
+deliberadamente removido de chips e cards funcionais (carteirinha, cards de consulta/evento) porque o
+render "glossy"/colorido do emoji do SO destoa do estilo flat da marca — ficam só nos micro-momentos de
+celebração (confete em `faiscas()`), onde a variação de cor é parte do efeito. Ao adicionar um novo indicador
+visual (chip, badge, ícone de categoria), desenhe um símbolo novo em `D` em vez de usar emoji.
+
+O ícone do app (`icon-192.png`, `icon-512.png`, `icon-maskable.png`) é um coração liso sobre o mesmo
+gradiente do `.hero`, gerado como SVG e rasterizado (não é mais o texto "Bia", que virava ilegível no
+tamanho de ícone de tela inicial). `logo.png`/`logo-branco.png` viraram um *lockup* coração+"Bia" lado a
+lado, no lugar do coração flutuando isolado acima do texto. Se esses arquivos precisarem ser regenerados,
+o método usado foi: desenhar em SVG/HTML, renderizar via Chrome/Edge headless (`--headless=new
+--screenshot`) e recortar com `System.Drawing` do PowerShell — headless Chrome/Edge não respeita
+`--window-size` de forma confiável para larguras abaixo de ~500px (há um mínimo interno), então viewports de
+celular só saem certos renderizando dentro de um `<iframe>` com largura CSS fixa, nunca direto na janela
+de topo.
+
 ### Fotos anexadas (recados e consultas)
 
 Não há Cloud Storage (fora do plano gratuito do Firebase), então fotos viram base64 dentro de documentos

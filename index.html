@@ -17,12 +17,13 @@
   --papel:#FDF7FA;
   --nuvem:#FFFFFF;
   --tinta:#463451;
-  --tinta2:#8B7B95;
+  --tinta2:#6E5E7C;
   --tinta3:#B6A9BE;
   --linha:#EFE3EC;
   --menta:#5FC9A8;
   --pessego:#FF7E68;
-  --lavanda:#A08FE6;
+  --lavanda:#7455CE;
+  --lavanda-sombra:#5B3FAE;
   --sol:#FFC94A;
   --ceu:#6FBBEE;
   --uva:#E6A2D6;
@@ -54,7 +55,7 @@ svg{display:block}
 .eu{
   width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
   font-family:"Baloo 2";font-weight:800;font-size:15px;color:#fff;background:var(--lavanda);
-  box-shadow:0 3px 0 #8878CE
+  box-shadow:0 3px 0 var(--lavanda-sombra)
 }
 .saudacao h1{font-size:27px}
 .saudacao p{margin:3px 0 0;color:var(--tinta2);font-size:14px;font-weight:600;text-transform:lowercase}
@@ -93,7 +94,8 @@ svg{display:block}
 .cart-idade{color:var(--tinta2);font-size:13.5px;font-weight:700;margin-top:3px}
 .picotado{border:none;border-top:2px dashed var(--linha);margin:15px 0 13px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#F4EEFA;color:#6B5C77;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#F4EEFA;color:#6B5C77;white-space:nowrap}
+.chip svg{width:13px;height:13px;stroke-width:2.2;flex:0 0 auto}
 .chip.alerta{background:#FFE7E2;color:#B4463A}
 .chip.sangue{background:#FFF1CE;color:#7A5B12}
 .chip.plano{background:#E3F4EE;color:#2F7460}
@@ -102,7 +104,9 @@ svg{display:block}
 /* ---------- cabeçalho colorido ---------- */
 .hero{
   margin:0 -16px;padding:16px 22px 96px;
-  background:linear-gradient(158deg,#A78BEA 0%,#C79AE0 48%,#F0A9B8 100%);
+  background:
+    linear-gradient(180deg, rgba(40,24,54,.16), rgba(40,24,54,0) 55%),
+    linear-gradient(158deg,#9E7EE8 0%,#C98CD6 48%,#EF8CA0 100%);
   border-radius:0 0 36px 36px;color:#fff;position:relative;overflow:hidden
 }
 .hero::after{
@@ -112,9 +116,9 @@ svg{display:block}
 .hero .topo{padding:4px 0 0;position:relative;z-index:1}
 .hero .marca{height:32px}
 .hero .saudacao{margin:20px 0 0;position:relative;z-index:1}
-.hero .saudacao h1{font-size:28px;color:#fff}
-.hero .saudacao p{color:rgba(255,255,255,.85);margin-top:4px}
-.eu{background:rgba(255,255,255,.24);box-shadow:none;color:#fff}
+.hero .saudacao h1{font-size:28px;color:#fff;text-shadow:0 1px 6px rgba(40,24,54,.22)}
+.hero .saudacao p{color:rgba(255,255,255,.92);margin-top:4px;text-shadow:0 1px 4px rgba(40,24,54,.18)}
+.hero .eu{background:rgba(255,255,255,.24);box-shadow:none;color:#fff}
 .carteirinha{margin-top:-78px;position:relative;z-index:2}
 
 /* ---------- atalhos ---------- */
@@ -183,8 +187,8 @@ svg{display:block}
 .filtro:active{transform:scale(.94)}
 
 /* ---------- botões ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:16px;padding:13px 20px;border-radius:17px;background:var(--lavanda);color:#fff;box-shadow:0 5px 0 #8878CE;transition:transform .11s,box-shadow .11s;width:100%}
-.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8878CE}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:"Baloo 2";font-weight:700;font-size:16px;padding:13px 20px;border-radius:17px;background:var(--lavanda);color:#fff;box-shadow:0 5px 0 var(--lavanda-sombra);transition:transform .11s,box-shadow .11s;width:100%}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--lavanda-sombra)}
 .btn:disabled{opacity:.55}
 .btn.claro{background:var(--nuvem);color:var(--tinta);box-shadow:0 5px 0 var(--linha)}
 .btn.claro:active{box-shadow:0 1px 0 var(--linha)}
@@ -215,7 +219,7 @@ svg{display:block}
   box-shadow:0 6px 0 #E0644E, 0 16px 24px -12px rgba(224,100,78,.85);
   transition:transform .11s,box-shadow .11s
 }
-.mais svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.mais svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 1px 1px rgba(70,52,81,.28))}
 .mais:active{transform:translateY(5px) scale(.96);box-shadow:0 1px 0 #E0644E}
 
 /* ---------- folha ---------- */
@@ -538,7 +542,11 @@ const D = {
   mochila:'<rect x="5.6" y="9.2" width="12.8" height="11.6" rx="3.4"/><path d="M8 9.2V7a4 4 0 0 1 8 0v2.2"/><path d="M9.4 9.2v3.4h5.2V9.2M9.8 15.8h4.4"/>',
   alfinete:'<path d="M12 21s-6.4-6.2-6.4-11A6.4 6.4 0 0 1 18.4 10c0 4.8-6.4 11-6.4 11z"/><circle cx="12" cy="10" r="2.3"/>',
   camera:'<rect x="3.2" y="7.4" width="17.6" height="12.2" rx="3"/><path d="M8.6 7.4 10 5h4l1.4 2.4"/><circle cx="12" cy="13.4" r="3.3"/>',
-  x:'<path d="M6 6l12 12M18 6 6 18"/>'
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  gota:'<path d="M12 3.6c-4 5-6.8 8.7-6.8 11.8a6.8 6.8 0 0 0 13.6 0c0-3.1-2.8-6.8-6.8-11.8z"/>',
+  aviso:'<path d="M12 4.4 21 19H3z" stroke-linejoin="round"/><path d="M12 10.4v3.6M12 16.6h.01"/>',
+  cartao:'<rect x="3" y="6" width="18" height="13" rx="2.6"/><path d="M3 10.4h18M6.4 14.4h4"/>',
+  repetir:'<path d="M4.4 12a7.6 7.6 0 0 1 12.8-5.6M19.6 12a7.6 7.6 0 0 1-12.8 5.6"/><path d="M17.6 3.6v3.4h-3.4M6.4 20.4v-3.4h3.4"/>'
 };
 const ico = (n, cls='ic') => `<svg viewBox="0 0 24 24" class="${cls}">${D[n]||D.estrela}</svg>`;
 
@@ -676,12 +684,12 @@ function desenhaSaudacao(){
 /* ---------- carteirinha ---------- */
 function desenhaCarteirinha(){
   const p=db.perfil||{}, chips=[];
-  if(p.sangue) chips.push(`<span class="chip sangue">🩸 ${esc(p.sangue)}</span>`);
+  if(p.sangue) chips.push(`<span class="chip sangue">${ico('gota')} ${esc(p.sangue)}</span>`);
   (p.alergias||'').split(',').map(s=>s.trim()).filter(Boolean)
-    .forEach(a=>chips.push(`<span class="chip alerta">⚠️ ${esc(a)}</span>`));
-  if(p.plano) chips.push(`<span class="chip plano">💳 ${esc(p.plano)}</span>`);
+    .forEach(a=>chips.push(`<span class="chip alerta">${ico('aviso')} ${esc(a)}</span>`));
+  if(p.plano) chips.push(`<span class="chip plano">${ico('cartao')} ${esc(p.plano)}</span>`);
   const ativos = db.remedios.filter(remedioAtivo).length;
-  if(ativos) chips.push(`<span class="chip">💊 ${ativos} em uso</span>`);
+  if(ativos) chips.push(`<span class="chip">${ico('comprimido')} ${ativos} em uso</span>`);
 
   $('#carteirinha').innerHTML = `
     <span class="selo">caderneta</span>
@@ -768,7 +776,7 @@ function cardEvento(e){
       <div style="flex:1">
         <h3>${esc(e.titulo)}</h3>
         <div class="sub">${dataBR(e.data)} · ${quandoTexto(e.data)}${e.hora? ' · '+esc(e.hora):''}</div>
-        ${e.local? `<div class="sub">📍 ${esc(e.local)}</div>`:''}
+        ${e.local? `<div class="sub" style="display:flex;align-items:center;gap:5px">${ico('alfinete','ic mini')} ${esc(e.local)}</div>`:''}
       </div>
     </div>
     ${e.obs? `<div class="corpo">${esc(e.obs)}</div>`:''}</button>`;
@@ -807,7 +815,7 @@ function cardConsulta(c){
     </div>
     ${c.motivo? `<div class="corpo"><strong>Por quê:</strong> ${esc(c.motivo)}</div>`:''}
     ${c.conduta? `<div class="corpo"><strong>O que ficou:</strong> ${esc(c.conduta)}</div>`:''}
-    ${c.retorno? `<div class="chips" style="margin-top:11px"><span class="chip">🔁 retorno ${dataBR(c.retorno)}</span></div>`:''}
+    ${c.retorno? `<div class="chips" style="margin-top:11px"><span class="chip">${ico('repetir')} retorno ${dataBR(c.retorno)}</span></div>`:''}
   </button>`;
 }
 function desenhaConsultas(){
