@@ -70,6 +70,7 @@ familias/nossa-filha          → perfil da criança (documento único)
   ├ eventos/{id}               → compromissos na agenda
   ├ doses/{id}                 → registro de doses marcadas
   ├ recados/{id}                → mural de recados (título, texto, etiqueta, importante)
+  ├ vacinas/{id}                → doses de vacina já tomadas (veja abaixo)
   ├ dispositivos/{id}          → tokens de push, um por aparelho instalado
   └ anexos/{id}                → fotos em base64, fora do fluxo ao vivo (veja abaixo)
 ```
@@ -102,6 +103,22 @@ caixinha de seleção. Um recado importante aparece fixado no topo do mural (cla
 no bloco "Não esquecer" da tela Hoje, acima dos remédios — esse bloco (`desenhaNaoEsquecer()`) fica oculto
 quando não há nenhum recado importante. O filtro do mural por etiqueta é sempre visível; o filtro
 "Importantes" só aparece quando existe pelo menos um recado marcado assim (`desenhaFiltrosMural()`).
+
+### Carteira de vacinas
+
+`CALENDARIO_VACINAL` (constante no `index.html`) é uma tabela fixa, no código, do calendário nacional de
+vacinação (PNI) até os 4 anos — **não** é editável pelo usuário nem vem do Firestore, é só a referência
+usada para calcular datas esperadas (`somarMeses(nascimento, idadeEmMeses)`) e decidir o status de cada
+dose: `dada` (existe um registro em `db.vacinas` com o mesmo par vacina+rótulo da dose), `atrasada` (sem
+registro e a data esperada já passou) ou `prevista` (sem registro, ainda não chegou a data). A tela
+("Carteira de vacinas", aberta via `abrirVacinas()` a partir de Ajustes) é só uma folha, não uma aba —
+mesmo padrão de `abrirContatos()`/`abrirPerfil()`. `db.vacinas` guarda apenas as doses **realmente tomadas**
+(`{vacina, dose, data, local, autor}`, gravadas com o `Store.gravarItem('vacinas', …)` genérico, sem nada
+específico em `store-firestore.js` além de `vacinas` estar em `LISTAS`); o calendário nunca é escrito lá.
+"Outra vacina" permite registrar algo fora da tabela fixa (catch-up, vacina de viagem, etc.) — nesse caso
+não há dose/data esperada pra comparar, então some direto pra `db.vacinas` sem passar por status calculado.
+O calendário embutido é referência, não prescrição médica — o texto de aviso na tela e este comentário
+existem por causa disso: datas reais de vacinação variam por atraso, doença, orientação do pediatra etc.
 
 ### Sistema visual (cores, ícones, marca)
 
@@ -137,6 +154,32 @@ o método usado foi: desenhar em SVG/HTML, renderizar via Chrome/Edge headless (
 `--window-size` de forma confiável para larguras abaixo de ~500px (há um mínimo interno), então viewports de
 celular só saem certos renderizando dentro de um `<iframe>` com largura CSS fixa, nunca direto na janela
 de topo.
+
+### Movimento: `redesenha()` em vez de `innerHTML =` direto
+
+Toda tela é reconstruída via `innerHTML =` puro (nunca um framework de diffing) — o que significa que uma
+`transition` de CSS declarada num elemento de lista nunca dispara sozinha, porque o nó é destruído e recriado
+a cada redesenho, não modificado. `redesenha(el, html)` existe pra dar um sinal visual rápido de "isso
+mudou" nesses casos: troca o `innerHTML` e reinicia uma animação de opacidade de 180ms no container inteiro
+(não por item — sem stagger). Use `redesenha()` nos containers de lista/resumo que mudam por sincronização
+ao vivo ou troca de filtro (`doses-hoje`, `lista-consultas`, `lista-mural`, `carteirinha`, etc.). **Não** use
+em conteúdo redesenhado a cada toque dentro do mesmo formulário (grade de horários, escolha de etiqueta,
+bichinho) — aí a frequência é alta demais pra animação ajudar, só atrapalha.
+
+Na mesma linha, `alternarVisivel(el, mostrar)` substitui `el.hidden = true/false` cru pra elementos que
+precisam de uma transição de entrada/saída (botão flutuante, visor de foto em tela cheia): o
+`[hidden]{display:none!important}` global corta qualquer `transition` no meio se você só trocar `hidden`
+direto, então a função espera a transição de opacidade terminar antes de aplicar `hidden=true` de verdade.
+A troca de aba (`ir()`) continua usando `hidden` cru de propósito — é uma ação de altíssima frequência, e
+ação frequente não deveria ganhar animação (ver troca de tela abaixo).
+
+A tela de carregamento inicial (`#porta-carregando`) mostra uma silhueta da tela Hoje (classe `.osso`, brilho
+via `background-position` animado) em vez de um spinner solto — só é visível de verdade numa conexão real
+com o Firebase; em modo local o carregamento é rápido demais pra aparecer.
+
+A troca de tela (`ir()`, animação `entra` em `.tela.on`) tem entrada mas não tem saída — decisão deliberada,
+não esquecimento: trocar de aba é a ação mais frequente do app, e o guia de movimento deste projeto (ver
+`design-motion-principles`) recomenda restrição justamente nas ações de alta frequência.
 
 ### Fotos anexadas (recados e consultas)
 

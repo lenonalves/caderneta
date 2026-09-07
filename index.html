@@ -217,8 +217,10 @@ svg{display:block}
   width:58px;height:58px;border-radius:21px;background:var(--pessego);color:#fff;
   display:grid;place-items:center;
   box-shadow:0 6px 0 #E0644E, 0 16px 24px -12px rgba(224,100,78,.85);
-  transition:transform .11s,box-shadow .11s
+  opacity:0;transform:scale(.9);
+  transition:transform .11s,box-shadow .11s,opacity .18s ease
 }
+.mais.visivel{opacity:1;transform:scale(1)}
 .mais svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 1px 1px rgba(70,52,81,.28))}
 .mais:active{transform:translateY(5px) scale(.96);box-shadow:0 1px 0 #E0644E}
 
@@ -257,6 +259,17 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 .interruptor[aria-pressed="true"]{background:var(--menta)}
 .interruptor[aria-pressed="true"]::after{transform:translateX(20px)}
 
+/* ---------- carteira de vacinas ---------- */
+.vacina-grupo{margin:18px 0}
+.vacina-grupo h3{font-size:15px;margin:0 0 8px}
+.vacina-doses{display:flex;flex-direction:column;gap:6px}
+.vacina-dose{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;background:var(--nuvem);border-radius:14px;padding:11px 14px;border:1.5px solid var(--linha);font-size:13.5px;font-weight:700;text-align:left;color:var(--tinta)}
+.vacina-dose .vacina-status{font-size:12px;font-weight:700;color:var(--tinta2);white-space:nowrap}
+.vacina-dose.dada{border-color:transparent;background:#E1F3EC}
+.vacina-dose.dada .vacina-status{color:#2E9C7C}
+.vacina-dose.atrasada{border-color:#FFC7BA;background:#FFF3F0}
+.vacina-dose.atrasada .vacina-status{color:#B4463A}
+
 /* ---------- fotos anexadas ---------- */
 .anexos{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 4px}
 .anexo{position:relative;width:72px;height:72px}
@@ -264,13 +277,17 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 .anexo-foto:active{transform:scale(.94)}
 .anexo-apagar{position:absolute;top:-6px;right:-6px;width:23px;height:23px;border-radius:50%;background:var(--tinta);color:#fff;display:grid;place-items:center;box-shadow:0 2px 4px rgba(0,0,0,.25)}
 .anexo-apagar svg{width:11px;height:11px;stroke-width:2.6}
-.visor{position:fixed;inset:0;z-index:90;background:rgba(20,14,24,.94);display:grid;place-items:center;padding:22px}
+.anexo-esqueleto{width:72px;height:72px;border-radius:15px}
+.visor{position:fixed;inset:0;z-index:90;background:rgba(20,14,24,.94);display:grid;place-items:center;padding:22px;opacity:0;transition:opacity .22s ease}
 .visor[hidden]{display:none}
-.visor img{max-width:100%;max-height:100%;border-radius:16px}
+.visor.visivel{opacity:1}
+.visor img{max-width:100%;max-height:100%;border-radius:16px;transform:scale(.96);transition:transform .22s cubic-bezier(.2,1.1,.4,1)}
+.visor.visivel img{transform:scale(1)}
 
 /* ---------- porta: login, carregando, erro ---------- */
-.porta{position:fixed;inset:0;z-index:80;background:var(--papel);display:grid;place-items:center;padding:24px}
+.porta{position:fixed;inset:0;z-index:80;background:var(--papel);display:grid;place-items:center;padding:24px;opacity:1;transition:opacity .28s ease}
 .porta[hidden]{display:none}
+.porta.saindo{opacity:0}
 .porta-caixa{width:100%;max-width:340px;text-align:center}
 .porta .marca-grande{width:150px;margin:0 auto 6px}
 .porta p{color:var(--tinta2);font-size:14.5px;margin:0 0 24px;line-height:1.5}
@@ -279,6 +296,25 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 .girando{width:42px;height:42px;border-radius:50%;border:4px solid var(--linha);border-top-color:var(--lavanda);animation:gira .8s linear infinite;margin:0 auto}
 @keyframes gira{to{transform:rotate(360deg)}}
 .porta h1{font-size:26px;margin-bottom:6px}
+
+/* Carregando: silhueta da tela Hoje em vez de só um spinner solto —
+   dá pra reconhecer o formato do app antes mesmo dos dados chegarem. */
+#porta-carregando{display:block;place-items:unset;padding:0;overflow:hidden}
+.esqueleto{max-width:520px;margin:0 auto;padding:18px 16px 0}
+.esqueleto p{text-align:center;color:var(--tinta2);font-size:13px;font-weight:700;margin:0 0 22px}
+.osso{border-radius:16px;background:linear-gradient(110deg, var(--linha) 8%, #F7EFF5 22%, var(--linha) 36%);background-size:250% 100%;animation:brilho 1.5s ease-in-out infinite}
+@keyframes brilho{0%{background-position:150% 0}100%{background-position:-50% 0}}
+.esq-hero{height:150px;border-radius:0 0 36px 36px;margin:0 -16px 0;width:calc(100% + 32px)}
+.esq-cartao{height:118px;border-radius:26px;margin-top:-70px;position:relative}
+.esq-atalhos{display:flex;gap:9px;margin-top:22px}
+.esq-atalhos .osso{height:62px;flex:1;border-radius:18px}
+.esq-titulo{height:19px;width:150px;border-radius:8px;margin-top:30px}
+.esq-linha{height:58px;border-radius:19px;margin-top:10px}
+
+/* #app começa invisível e recebe a classe .pronto quando os dados chegam,
+   pra sair do esqueleto/spinner com uma transição em vez de um corte seco. */
+#app{opacity:0;transition:opacity .35s ease}
+#app.pronto{opacity:1}
 
 
 /* ---------- avisos ---------- */
@@ -291,6 +327,13 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 
 .rodape-nota{text-align:center;color:var(--tinta3);font-size:12.5px;margin:30px 6px 8px;line-height:1.55}
 
+/* Toque leve de "isso acabou de mudar" quando uma lista é redesenhada
+   (sincronização do outro celular, troca de filtro). Só opacidade, rápido
+   e sem stagger — não é decoração de entrada, é confirmação de que os
+   dados atualizaram, então some sozinho em pouco tempo. */
+.recem-atualizado{animation:conteudoRenova .18s ease-out}
+@keyframes conteudoRenova{from{opacity:.4}to{opacity:1}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -302,7 +345,15 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 <div id="offline">Sem internet — pode anotar, sobe sozinho depois</div>
 
 <div class="porta" id="porta-carregando">
-  <div class="porta-caixa"><div class="girando"></div><p style="margin-top:20px">Abrindo a caderneta…</p></div>
+  <div class="esqueleto" aria-hidden="true">
+    <p>Abrindo a caderneta…</p>
+    <div class="osso esq-hero"></div>
+    <div class="osso esq-cartao"></div>
+    <div class="esq-atalhos"><div class="osso"></div><div class="osso"></div><div class="osso"></div></div>
+    <div class="osso esq-titulo"></div>
+    <div class="osso esq-linha"></div>
+    <div class="osso esq-linha"></div>
+  </div>
 </div>
 
 <div class="porta" id="porta-erro" hidden>
@@ -430,6 +481,12 @@ addEventListener('unhandledrejection', function(e){
           <div><h3>Contatos e anotações fixas</h3><div class="sub">Pediatra, plano, o que sempre esquecemos</div></div>
         </div>
       </button>
+      <button class="card link" onclick="abrirVacinas()">
+        <div class="linha-topo">
+          <div class="bolinha" style="background:#E1F3EC;color:#2E9C7C"><svg viewBox="0 0 24 24" class="ic"><path d="M13.6 3.8 20.2 10.4M17.6 5.8l-2.4 2.4M11.4 9.6l3 3"/><path d="M4 20l3.6-1 8-8-2.6-2.6-8 8z"/></svg></div>
+          <div><h3>Carteira de vacinas</h3><div class="sub">Calendário nacional, o que já tomou</div></div>
+        </div>
+      </button>
     </div>
 
     <div class="bloco">
@@ -509,7 +566,20 @@ const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const agora = ()=> new Date().toISOString();
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-let db = { perfil:{}, consultas:[], remedios:[], eventos:[], membros:[], doses:{}, recados:[] };
+/* Troca o conteúdo e dá um sinal rápido de "isso mudou" — usado nas listas
+   que se redesenham sozinhas quando o outro celular sincroniza algo ou
+   quando um filtro muda, pra não ser um corte seco. Não usar em conteúdo
+   redesenhado a cada toque dentro de um formulário (grade de horários,
+   etiquetas) — aí a troca é tão frequente que a animação atrapalharia. */
+function redesenha(el, html){
+  if(!el) return;
+  el.innerHTML = html;
+  el.classList.remove('recem-atualizado');
+  void el.offsetWidth;
+  el.classList.add('recem-atualizado');
+}
+
+let db = { perfil:{}, consultas:[], remedios:[], eventos:[], membros:[], doses:{}, recados:[], vacinas:[] };
 let usuario = null, ouvindo = false, carregou = false, perguntou = false;
 let filtroMural = 'Tudo', etiquetaAtual = 'Outro';
 let anexoDonoAtual = null, anexosAtual = [];
@@ -593,15 +663,70 @@ function idade(nasc){
   return `${anos} ${anos===1?'ano':'anos'}` + (meses? ` e ${meses} ${meses===1?'mês':'meses'}` : '');
 }
 const remedioAtivo = r => !r.fim || r.fim >= hojeISO();
+function somarMeses(iso, meses){
+  const d = new Date(iso+'T12:00'); d.setMonth(d.getMonth()+meses);
+  return d.toLocaleDateString('sv-SE');
+}
+
+/* Calendário nacional de vacinação (PNI) até os 4 anos — referência, não
+   substitui a caderneta física nem o pediatra: atrasos e orientações
+   médicas mudam as datas de verdade de cada criança. */
+const CALENDARIO_VACINAL = [
+  ['BCG', [['Dose única', 0]]],
+  ['Hepatite B', [['Ao nascer', 0]]],
+  ['Pentavalente (DTP + Hib + Hep B)', [['1ª dose', 2], ['2ª dose', 4], ['3ª dose', 6]]],
+  ['VIP (poliomielite injetável)', [['1ª dose', 2], ['2ª dose', 4], ['3ª dose', 6]]],
+  ['Pneumocócica 10-valente', [['1ª dose', 2], ['2ª dose', 4], ['Reforço', 12]]],
+  ['Rotavírus', [['1ª dose', 2], ['2ª dose', 4]]],
+  ['Meningocócica C', [['1ª dose', 3], ['2ª dose', 5], ['Reforço', 12]]],
+  ['Febre amarela', [['Dose única', 9], ['Reforço', 48]]],
+  ['Tríplice viral (sarampo, caxumba, rubéola)', [['1ª dose', 12]]],
+  ['Tetra viral (+ varicela)', [['Reforço', 15]]],
+  ['Hepatite A', [['Dose única', 15]]],
+  ['DTP (reforço)', [['1º reforço', 15], ['2º reforço', 48]]],
+  ['VOP (poliomielite oral, reforço)', [['1º reforço', 15], ['2º reforço', 48]]]
+];
 
 /* ---------- entrar / sair ---------- */
+
+/* Troca hidden por uma transição de verdade: some com fade e só sai do
+   layout (hidden=true) depois que a transição termina — sem isso, o
+   [hidden]{display:none!important} global corta a animação no meio. */
+function alternarVisivel(el, mostrarEl, ms=200){
+  if(!el) return;
+  if(mostrarEl){
+    if(!el.hidden) return;
+    el.hidden = false;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('visivel')));
+  } else {
+    if(el.hidden) return;
+    el.classList.remove('visivel');
+    setTimeout(()=>{ if(!el.classList.contains('visivel')) el.hidden = true; }, ms);
+  }
+}
+/* Mesma ideia pra quem usa classe "saindo" em vez de "visivel" (as portas
+   de login/carregando/erro, que já começam visíveis por padrão). */
+function esconderComFade(el, ms=300){
+  if(!el || el.hidden) return;
+  el.classList.add('saindo');
+  setTimeout(()=>{ if(el.classList.contains('saindo')) el.hidden = true; }, ms);
+}
+
 function mostrar(quem){
-  $('#porta-login').hidden      = quem!=='login';
-  $('#porta-carregando').hidden = quem!=='carregando';
-  $('#porta-erro').hidden       = true;
+  ['login','carregando','erro'].forEach(k=>{
+    const el = $('#porta-'+k);
+    if(k===quem){ el.hidden = false; el.classList.remove('saindo'); }
+    else if(!el.hidden) esconderComFade(el);
+  });
   const dentro = quem==='app';
-  $('#app').hidden = $('#abas').hidden = !dentro;
-  $('#btn-mais').hidden = !dentro || telaAtual==='ajustes';
+  if(dentro && $('#app').hidden){
+    $('#app').hidden = $('#abas').hidden = false;
+    requestAnimationFrame(()=>$('#app').classList.add('pronto'));
+  } else if(!dentro){
+    $('#app').hidden = $('#abas').hidden = true;
+    $('#app').classList.remove('pronto');
+  }
+  alternarVisivel($('#btn-mais'), dentro && telaAtual!=='ajustes');
 }
 
 Store.aoTrocarUsuario(u=>{
@@ -691,7 +816,7 @@ function desenhaCarteirinha(){
   const ativos = db.remedios.filter(remedioAtivo).length;
   if(ativos) chips.push(`<span class="chip">${ico('comprimido')} ${ativos} em uso</span>`);
 
-  $('#carteirinha').innerHTML = `
+  redesenha($('#carteirinha'), `
     <span class="selo">caderneta</span>
     <div class="cart-topo">
       <div class="avatar">${esc(p.bicho||'🐣')}</div>
@@ -700,7 +825,7 @@ function desenhaCarteirinha(){
         <div class="cart-idade">${p.nascimento? idade(p.nascimento)+' · nasceu em '+dataBR(p.nascimento) : 'Adicione o nome e a data de nascimento'}</div>
       </div>
     </div>
-    ${chips.length? '<hr class="picotado"><div class="chips">'+chips.join('')+'</div>' : ''}`;
+    ${chips.length? '<hr class="picotado"><div class="chips">'+chips.join('')+'</div>' : ''}`);
 }
 $('#carteirinha').onclick = ()=>abrirPerfil();
 
@@ -721,7 +846,7 @@ function cardRecado(r){
 function desenhaNaoEsquecer(){
   const imp = (db.recados||[]).filter(r=>r.importante).sort((a,b)=>(b.data||'').localeCompare(a.data||''));
   $('#bloco-naoesquecer').hidden = !imp.length;
-  if(imp.length) $('#naoesquecer').innerHTML = imp.map(cardRecado).join('');
+  if(imp.length) redesenha($('#naoesquecer'), imp.map(cardRecado).join(''));
 }
 
 /* ---------- doses ---------- */
@@ -742,12 +867,12 @@ function desenhaDoses(){
     </svg>` : '';
 
   if(!itens.length){
-    $('#doses-hoje').innerHTML = `<div class="vazio"><div class="ilustra">${ico('broto')}</div>
+    redesenha($('#doses-hoje'), `<div class="vazio"><div class="ilustra">${ico('broto')}</div>
       <p>Nenhum remédio marcado pra hoje.</p>
-      <button class="btn claro" onclick="abrirRemedio()">Cadastrar um remédio</button></div>`;
+      <button class="btn claro" onclick="abrirRemedio()">Cadastrar um remédio</button></div>`);
     return;
   }
-  $('#doses-hoje').innerHTML = itens.map(i=>{
+  redesenha($('#doses-hoje'), itens.map(i=>{
     const k=`${i.r.id}|${hoje}|${i.h}`, f=db.doses[k];
     return `<div class="dose ${f?'feita':''}">
       <div class="dose-hora">${esc(i.h)}</div>
@@ -757,7 +882,7 @@ function desenhaDoses(){
       </div>
       <button class="marca" onclick="marcarDose('${k}',event)" aria-label="Marcar dose">${f?'✓':''}</button>
     </div>`;
-  }).join('');
+  }).join(''));
 }
 function marcarDose(k,ev){
   if(db.doses[k]) semTravar(Store.apagarDose(k));
@@ -783,15 +908,15 @@ function cardEvento(e){
 }
 function desenhaProximos(){
   const l=eventosFuturos().slice(0,2);
-  $('#proximos').innerHTML = l.length? l.map(cardEvento).join('')
+  redesenha($('#proximos'), l.length? l.map(cardEvento).join('')
     : `<div class="vazio"><div class="ilustra">${ico('balao')}</div><p>Nada marcado por enquanto.</p>
-       <button class="btn claro" onclick="abrirEvento()">Marcar um compromisso</button></div>`;
+       <button class="btn claro" onclick="abrirEvento()">Marcar um compromisso</button></div>`);
 }
 function desenhaUltima(){
   const c=[...db.consultas].sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
-  $('#ultima-consulta').innerHTML = c? cardConsulta(c)
+  redesenha($('#ultima-consulta'), c? cardConsulta(c)
     : `<div class="vazio"><div class="ilustra">${ico('caderno')}</div><p>O histórico começa na primeira anotação.</p>
-       <button class="btn claro" onclick="abrirConsulta()">Registrar uma consulta</button></div>`;
+       <button class="btn claro" onclick="abrirConsulta()">Registrar uma consulta</button></div>`);
 }
 
 /* ---------- consultas ---------- */
@@ -821,10 +946,10 @@ function cardConsulta(c){
 function desenhaConsultas(){
   let l=[...db.consultas].sort((a,b)=>(b.data||'').localeCompare(a.data||''));
   if(filtroEsp!=='Tudo') l=l.filter(c=>c.especialidade===filtroEsp);
-  $('#lista-consultas').innerHTML = l.length? l.map(cardConsulta).join('')
+  redesenha($('#lista-consultas'), l.length? l.map(cardConsulta).join('')
     : `<div class="vazio"><div class="ilustra">${ico('estetoscopio')}</div>
        <p>Cada consulta anotada vira memória pro próximo médico.</p>
-       <button class="btn claro" onclick="abrirConsulta()">Registrar a primeira</button></div>`;
+       <button class="btn claro" onclick="abrirConsulta()">Registrar a primeira</button></div>`);
 }
 
 /* ---------- remédios ---------- */
@@ -846,21 +971,21 @@ function cardRemedio(r){
 }
 function desenhaRemedios(){
   const ativos=db.remedios.filter(remedioAtivo), antigos=db.remedios.filter(r=>!remedioAtivo(r));
-  $('#lista-remedios').innerHTML =
+  redesenha($('#lista-remedios'),
     (ativos.length? ativos.map(cardRemedio).join('')
       : `<div class="vazio"><div class="ilustra">${ico('comprimido')}</div><p>Nenhum remédio em uso agora.</p>
          <button class="btn claro" onclick="abrirRemedio()">Cadastrar remédio</button></div>`)
-    + (antigos.length? `<div class="bloco"><div class="bloco-cab"><h2>Já usou</h2></div>${antigos.map(cardRemedio).join('')}</div>`:'');
+    + (antigos.length? `<div class="bloco"><div class="bloco-cab"><h2>Já usou</h2></div>${antigos.map(cardRemedio).join('')}</div>`:''));
 }
 
 /* ---------- agenda ---------- */
 function desenhaAgenda(){
   const fut=eventosFuturos(), pas=db.eventos.filter(e=>e.data<hojeISO()).sort((a,b)=>b.data.localeCompare(a.data));
-  $('#lista-agenda').innerHTML =
+  redesenha($('#lista-agenda'),
     (fut.length? fut.map(cardEvento).join('')
       : `<div class="vazio"><div class="ilustra">${ico('calendario')}</div><p>Agenda livre.</p>
          <button class="btn claro" onclick="abrirEvento()">Marcar compromisso</button></div>`)
-    + (pas.length? `<div class="bloco"><div class="bloco-cab"><h2>Já passou</h2></div>${pas.slice(0,10).map(cardEvento).join('')}</div>`:'');
+    + (pas.length? `<div class="bloco"><div class="bloco-cab"><h2>Já passou</h2></div>${pas.slice(0,10).map(cardEvento).join('')}</div>`:''));
 }
 
 function setFiltroMural(f){ filtroMural=f; desenhaFiltrosMural(); desenhaMural(); }
@@ -879,9 +1004,9 @@ function desenhaMural(){
   if(filtroMural==='Importantes') l = l.filter(r=>r.importante);
   else if(filtroMural!=='Tudo') l = l.filter(r=>r.etiqueta===filtroMural);
   l.sort((a,b)=> (Number(!!b.importante)-Number(!!a.importante)) || (b.data||'').localeCompare(a.data||''));
-  $('#lista-mural').innerHTML = l.length? l.map(cardRecado).join('')
+  redesenha($('#lista-mural'), l.length? l.map(cardRecado).join('')
     : `<div class="vazio"><div class="ilustra">${ico('alfinete')}</div><p>Nenhum recado por aqui ainda.</p>
-       <button class="btn claro" onclick="abrirRecado()">Escrever o primeiro</button></div>`;
+       <button class="btn claro" onclick="abrirRecado()">Escrever o primeiro</button></div>`);
 }
 
 /* ---------- membros ---------- */
@@ -901,11 +1026,11 @@ function desenhaMembros(){
   }).join('');
 
   const souCadastrado = db.membros.some(m=>m.id===meu);
-  $('#lista-membros').innerHTML = cards + (souCadastrado ? '' :
+  redesenha($('#lista-membros'), cards + (souCadastrado ? '' :
     `<div class="vazio"><div class="ilustra">${ico('pessoa')}</div>
      <p>Você ainda não se cadastrou. Isso é o que faz cada anotação mostrar quem escreveu.</p>
      <button class="btn claro" onclick="abrirMeuCadastro()">Completar meu cadastro</button></div>`)
-    + (db.membros.length<2 ? `<p class="dica" style="margin:8px 4px 0">Quando a outra pessoa entrar e se cadastrar, ela aparece aqui.</p>` : '');
+    + (db.membros.length<2 ? `<p class="dica" style="margin:8px 4px 0">Quando a outra pessoa entrar e se cadastrar, ela aparece aqui.</p>` : ''));
 }
 
 function desenhaAvisos(){
@@ -1020,6 +1145,45 @@ function abrirContatos(){
 function salvarContatos(ev){
   semTravar(Store.gravarPerfil({...db.perfil, obs:val('p-obs2')}));
   fecharFolha(); comemora(ev,'Salvo');
+}
+
+/* ---------- carteira de vacinas ---------- */
+function abrirVacinas(){
+  const nasc = db.perfil.nascimento, hoje = hojeISO();
+  const grupos = CALENDARIO_VACINAL.map(([nome,doses])=>{
+    const itens = doses.map(([rotulo,meses])=>{
+      const registro = db.vacinas.find(v=>v.vacina===nome && v.dose===rotulo);
+      const esperada = nasc ? somarMeses(nasc,meses) : null;
+      let cor='pendente', status;
+      if(registro){ cor='dada'; status='dada em '+dataBR(registro.data); }
+      else if(esperada && esperada<hoje){ cor='atrasada'; status='atrasada'; }
+      else status = esperada ? 'prevista '+dataBR(esperada) : `aos ${meses} meses`;
+      return `<button type="button" class="vacina-dose ${cor}" onclick="abrirRegistroVacina('${esc(nome)}','${esc(rotulo)}','${registro?registro.id:''}')">
+        <span>${esc(rotulo)}</span><span class="vacina-status">${status}</span></button>`;
+    }).join('');
+    return `<div class="vacina-grupo"><h3>${esc(nome)}</h3><div class="vacina-doses">${itens}</div></div>`;
+  }).join('');
+  abrirFolha(`<h2>Carteira de vacinas</h2>
+    <p class="dica">Calendário nacional (PNI), só de referência — confira sempre com a caderneta física e o pediatra, atrasos e orientações mudam a data de cada criança.</p>
+    ${grupos}
+    <div class="btn-linha"><button class="btn claro" onclick="abrirRegistroVacina('','','')">Outra vacina</button></div>`);
+}
+function abrirRegistroVacina(vacina,dose,id){
+  const v = id ? db.vacinas.find(x=>x.id===id) : {data:hojeISO()};
+  abrirFolha(`<h2>${vacina? esc(vacina) : 'Outra vacina'}${dose? ' · '+esc(dose) : ''}</h2>
+    ${vacina? '' : `<label for="v-nome">Nome da vacina</label><input id="v-nome" placeholder="Ex: Meningo B">
+    <label for="v-dose">Dose</label><input id="v-dose" placeholder="Dose única, reforço...">`}
+    <label for="v-data">Data que tomou</label><input type="date" id="v-data" value="${esc(v.data)}">
+    <label for="v-local">Onde</label><input id="v-local" value="${esc(v.local)}" placeholder="Posto de saúde, clínica">
+    <div class="btn-linha"><button class="btn" onclick="salvarVacina('${id||''}','${esc(vacina)}','${esc(dose)}',event)">Salvar</button></div>
+    ${id?`<div class="btn-linha"><button class="btn perigo" onclick="apagar('vacinas','${id}')">Desmarcar</button></div>`:''}`);
+}
+function salvarVacina(id,vacina,dose,ev){
+  const nome = vacina || val('v-nome'), rotulo = dose || val('v-dose') || 'Dose';
+  if(!nome) return aviso('Escreva o nome da vacina');
+  if(!val('v-data')) return aviso('Escolha a data');
+  semTravar(Store.gravarItem('vacinas', { id: id||uid(), vacina:nome, dose:rotulo, data:val('v-data'), local:val('v-local'), autor:meuNome() }));
+  fecharFolha(); comemora(ev,'Vacina registrada');
 }
 
 /* ---------- consulta ---------- */
@@ -1214,16 +1378,18 @@ function blocoAnexos(id, rotulo='Fotos'){
     <p class="dica">Guardada comprimida, pronta pra mostrar no consultório.</p>`;
 }
 async function carregarAnexos(dono){
+  const cont = $('#lista-anexos');
+  if(cont) cont.innerHTML = '<div class="anexo-esqueleto osso"></div><div class="anexo-esqueleto osso"></div>';
   anexosAtual = await Store.listarAnexos(dono).catch(()=>[]);
   desenhaAnexos();
 }
 function desenhaAnexos(){
   const cont = $('#lista-anexos'); if(!cont) return;
-  cont.innerHTML = anexosAtual.map(a=>`
+  redesenha(cont, anexosAtual.map(a=>`
     <div class="anexo">
       <button type="button" class="anexo-foto" onclick="verFoto('${a.id}')" aria-label="Ver foto" style="background-image:url('${a.miniatura}')"></button>
       <button type="button" class="anexo-apagar" onclick="apagarAnexo('${a.id}')" aria-label="Apagar foto">${ico('x')}</button>
-    </div>`).join('');
+    </div>`).join(''));
 }
 function enviarAnexo(ev){
   const arquivo = ev.target.files[0]; ev.target.value='';
@@ -1247,9 +1413,13 @@ function apagarAnexo(id){
 }
 function verFoto(id){
   const a = anexosAtual.find(x=>x.id===id); if(!a) return;
-  $('#visor-img').src = a.imagem; $('#visor-foto').hidden = false;
+  $('#visor-img').src = a.imagem;
+  alternarVisivel($('#visor-foto'), true);
 }
-function fecharFoto(){ $('#visor-foto').hidden = true; $('#visor-img').src=''; }
+function fecharFoto(){
+  $('#visor-foto').classList.remove('visivel');
+  setTimeout(()=>{ $('#visor-foto').hidden = true; $('#visor-img').src=''; }, 220);
+}
 
 /* Reduz por canvas e devolve um data URL JPEG. */
 function comprimirImagem(arquivo, lado, qualidade){
@@ -1535,7 +1705,8 @@ Object.assign(window, {
   tocarHora, somarHora, receita, pedirAvisos, alarmeRemedio, alarmeEvento,
   exportar, copiarResumo, sairDaConta, fecharFolha,
   abrirRecado, salvarRecado, escolherEtiqueta, alternarImportante, setFiltroMural,
-  enviarAnexo, apagarAnexo, verFoto, fecharFoto
+  enviarAnexo, apagarAnexo, verFoto, fecharFoto,
+  abrirVacinas, abrirRegistroVacina, salvarVacina
 });
 </script>
 </body>
