@@ -478,6 +478,6 @@ Bloqueio de tela nos dois aparelhos protege mais que qualquer coisa do Firebase.
 
 Ideias já mapeadas para as próximas versões:
 
-- Carteira de vacinas com o calendário nacional já pré-cadastrado
 - Curva de crescimento (peso e altura por consulta)
 - Exportar o histórico de uma especialidade em PDF, pra levar impresso
+- Terminar o `worker.js` do carteiro (só está documentado em `PUSH.md`, o arquivo em si ainda não existe)

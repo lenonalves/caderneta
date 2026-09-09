@@ -24,8 +24,8 @@ const VAPID = "BHHHDLU4p6VYhChnt4WgCX3ssX7gQp6Ln8AvFIqhuTUODpuZ_e4acNgPaZz-qFSr2
 const FAMILIA = 'nossa-filha';
 
 const CONFIGURADO = !!configuracao.apiKey && !!configuracao.projectId;
-const LISTAS = ['consultas', 'remedios', 'eventos', 'membros', 'dispositivos', 'recados'];
-const vazio = () => ({ perfil: {}, consultas: [], remedios: [], eventos: [], membros: [], dispositivos: [], doses: {}, recados: [], anexos: [] });
+const LISTAS = ['consultas', 'remedios', 'eventos', 'membros', 'dispositivos', 'recados', 'vacinas'];
+const vazio = () => ({ perfil: {}, consultas: [], remedios: [], eventos: [], membros: [], dispositivos: [], doses: {}, recados: [], anexos: [], vacinas: [] });
 const agora = () => new Date().toISOString();
 
 /* =========================================================
