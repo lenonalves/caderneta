@@ -284,3 +284,18 @@ mudou" — sempre confira se a `VERSAO` foi incrementada ao investigar um deploy
 O service worker só guarda em cache requisições da mesma origem mais os domínios de Google Fonts; as
 chamadas de rede do Firestore/Firebase passam direto, sem cache, já que o Firestore gerencia seu próprio
 cache offline e interceptar essas chamadas quebraria a sincronização.
+
+**Antes de fazer `git push`, `diff` o repositório inteiro contra a pasta local — nunca copie "só os arquivos
+que eu lembro de ter mudado".** Já aconteceu de uma sessão editar `store-firestore.js` (LISTAS/vazio() de um
+recurso novo) e só enviar `index.html` nos commits seguintes, porque cada push posterior só copiava os
+arquivos daquela tarefa específica. O bug só aparece em produção (Firestore de verdade), nunca no teste
+local (que usa a cópia local do `store-firestore.js`, já correta) — o app carrega normal, mas quebra ao abrir
+a tela que depende do campo que faltou no banco publicado, com um erro tipo "Cannot read properties of
+undefined". Rotina segura: `diff` de cada arquivo rastreado entre o clone e a pasta local antes de decidir o
+que entra no commit, não confiar na memória de "o que essa tarefa tocou".
+
+Regras do Firestore (`firestore.rules`) não fazem parte do deploy do GitHub Pages — publicar no GitHub não
+publica a regra nova no Firebase. Toda vez que uma coleção nova ganha uma linha em `firestore.rules`, isso
+precisa ser colado manualmente no console do Firebase (Firestore Database → Regras → Publicar) além do
+`git push` — as duas coisas são passos separados, esquecer a segunda dá erro de permissão, não o
+"undefined" de dado ausente.
