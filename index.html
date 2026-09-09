@@ -28,7 +28,7 @@
   --ceu:#6FBBEE;
   --uva:#E6A2D6;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html,body{margin:0;padding:0}
 body{
@@ -41,7 +41,7 @@ body{
 }
 h1,h2,h3,.display{font-family:"Baloo 2",cursive;font-weight:800;letter-spacing:.1px;margin:0;line-height:1.15}
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
-button{cursor:pointer;border:none;background:none;padding:0}
+button{cursor:pointer;border:none;background:none;padding:0;-webkit-tap-highlight-color:transparent}
 svg{display:block}
 
 .wrap{max-width:520px;margin:0 auto;padding:0 16px}
@@ -259,6 +259,27 @@ textarea{min-height:90px;resize:vertical;line-height:1.55}
 .interruptor[aria-pressed="true"]{background:var(--menta)}
 .interruptor[aria-pressed="true"]::after{transform:translateX(20px)}
 
+/* ---------- lista/calendário (agenda) ---------- */
+.segmentado{display:flex;background:var(--nuvem);border-radius:14px;padding:4px;gap:4px;margin:18px 0}
+.segmentado button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:10px;font-size:13.5px;font-weight:700;color:var(--tinta2);transition:background .15s,color .15s}
+.segmentado button[aria-pressed="true"]{background:var(--lavanda);color:#fff}
+.segmentado svg{width:16px;height:16px}
+.cal-cab{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
+.cal-cab h3{font-size:17px;text-transform:capitalize}
+.cal-nav{width:34px;height:34px;border-radius:12px;background:var(--nuvem);display:grid;place-items:center;box-shadow:0 2px 0 -1px rgba(70,52,81,.06);transition:transform .12s}
+.cal-nav:active{transform:scale(.9)}
+.cal-nav svg{width:18px;height:18px}
+.cal-semana{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;font-weight:700;color:var(--tinta2);margin-bottom:6px}
+.cal-grade{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dia{aspect-ratio:1;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:13px;font-weight:700;color:var(--tinta);background:var(--nuvem);transition:transform .1s}
+.cal-dia:active{transform:scale(.92)}
+.cal-dia.vazio-dia{background:none;pointer-events:none}
+.cal-dia.cal-hoje{box-shadow:inset 0 0 0 2px var(--lavanda)}
+.cal-dia.cal-selecionado{background:var(--lavanda);color:#fff}
+.cal-pontos{display:flex;gap:2px;height:5px}
+.cal-pontos i{width:5px;height:5px;border-radius:50%;display:block}
+#cal-dia{margin-top:20px}
+
 /* ---------- carteira de vacinas ---------- */
 .vacina-grupo{margin:18px 0}
 .vacina-grupo h3{font-size:15px;margin:0 0 8px}
@@ -453,7 +474,14 @@ addEventListener('unhandledrejection', function(e){
   <!-- ============ AGENDA ============ -->
   <section class="tela" id="tela-agenda">
     <div class="topo-tela"><h1 class="titulo-tela">Agenda</h1><button class="eu avatar-topo" onclick="ir('ajustes')" aria-label="Ajustes">·</button></div>
+    <div id="agenda-alterna"></div>
     <div id="lista-agenda"></div>
+    <div id="vista-calendario" hidden>
+      <div class="cal-cab" id="cal-cab"></div>
+      <div class="cal-semana"><div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div></div>
+      <div class="cal-grade" id="cal-grade"></div>
+      <div id="cal-dia"></div>
+    </div>
   </section>
 
   <!-- ============ MURAL ============ -->
@@ -541,7 +569,7 @@ addEventListener('unhandledrejection', function(e){
 
 <nav class="abas" id="abas" hidden>
   <button class="aba" data-tela="hoje" aria-current="true">
-    <svg viewBox="0 0 24 24"><path d="M4 10.4 12 4l8 6.4V19a1.6 1.6 0 0 1-1.6 1.6h-3.6v-5.3H9.2v5.3H5.6A1.6 1.6 0 0 1 4 19z"/></svg>Hoje</button>
+    <svg viewBox="0 0 24 24"><path d="M4 10.4 12 4l8 6.4V19a1.6 1.6 0 0 1-1.6 1.6h-3.6v-5.3H9.2v5.3H5.6A1.6 1.6 0 0 1 4 19z"/></svg>Início</button>
   <button class="aba" data-tela="consultas">
     <svg viewBox="0 0 24 24"><rect x="5" y="4.6" width="14" height="15.8" rx="3"/><path d="M9.2 4.6a1 1 0 0 1 1-1h3.6a1 1 0 0 1 1 1M8.6 10.4h6.8M8.6 14.2h4.4"/></svg>Consultas</button>
   <button class="aba" data-tela="remedios">
@@ -616,7 +644,10 @@ const D = {
   gota:'<path d="M12 3.6c-4 5-6.8 8.7-6.8 11.8a6.8 6.8 0 0 0 13.6 0c0-3.1-2.8-6.8-6.8-11.8z"/>',
   aviso:'<path d="M12 4.4 21 19H3z" stroke-linejoin="round"/><path d="M12 10.4v3.6M12 16.6h.01"/>',
   cartao:'<rect x="3" y="6" width="18" height="13" rx="2.6"/><path d="M3 10.4h18M6.4 14.4h4"/>',
-  repetir:'<path d="M4.4 12a7.6 7.6 0 0 1 12.8-5.6M19.6 12a7.6 7.6 0 0 1-12.8 5.6"/><path d="M17.6 3.6v3.4h-3.4M6.4 20.4v-3.4h3.4"/>'
+  repetir:'<path d="M4.4 12a7.6 7.6 0 0 1 12.8-5.6M19.6 12a7.6 7.6 0 0 1-12.8 5.6"/><path d="M17.6 3.6v3.4h-3.4M6.4 20.4v-3.4h3.4"/>',
+  lista:'<path d="M8.4 6.6h11.4M8.4 12h11.4M8.4 17.4h11.4"/><circle cx="4.4" cy="6.6" r="1.3"/><circle cx="4.4" cy="12" r="1.3"/><circle cx="4.4" cy="17.4" r="1.3"/>',
+  'seta-esq':'<path d="M14.4 5.6 8 12l6.4 6.4"/>',
+  'seta-dir':'<path d="M9.6 5.6 16 12l-6.4 6.4"/>'
 };
 const ico = (n, cls='ic') => `<svg viewBox="0 0 24 24" class="${cls}">${D[n]||D.estrela}</svg>`;
 
@@ -892,6 +923,19 @@ function marcarDose(k,ev){
 /* ---------- eventos ---------- */
 const eventosFuturos = ()=> db.eventos.filter(e=>e.data>=hojeISO())
   .sort((a,b)=>(a.data+(a.hora||'')).localeCompare(b.data+(b.hora||'')));
+/* Consulta com data futura é compromisso marcado com antecedência — não
+   "última consulta" (isso é passado) e não fica de fora da agenda.
+   Estritamente depois de hoje: uma consulta datada hoje é o fluxo normal
+   (anotada na hora, no consultório), então continua contando como já
+   acontecida pra não sumir da tela Início toda vez que alguém anota algo. */
+const consultasFuturas = ()=> db.consultas.filter(c=>c.data>hojeISO());
+/* União de eventos + consultas futuras, ordenada por data — o que
+   alimenta "Vem aí" na Início e a lista da Agenda. */
+function itensFuturos(){
+  const evs = eventosFuturos().map(e=>({chave:e.data+(e.hora||''), html:cardEvento(e)}));
+  const cons = consultasFuturas().map(c=>({chave:c.data, html:cardConsulta(c)}));
+  return [...evs,...cons].sort((a,b)=>a.chave.localeCompare(b.chave));
+}
 
 function cardEvento(e){
   const [,nome,cor]=espInfo(e.tipo);
@@ -907,13 +951,13 @@ function cardEvento(e){
     ${e.obs? `<div class="corpo">${esc(e.obs)}</div>`:''}</button>`;
 }
 function desenhaProximos(){
-  const l=eventosFuturos().slice(0,2);
-  redesenha($('#proximos'), l.length? l.map(cardEvento).join('')
+  const l=itensFuturos().slice(0,2);
+  redesenha($('#proximos'), l.length? l.map(i=>i.html).join('')
     : `<div class="vazio"><div class="ilustra">${ico('balao')}</div><p>Nada marcado por enquanto.</p>
        <button class="btn claro" onclick="abrirEvento()">Marcar um compromisso</button></div>`);
 }
 function desenhaUltima(){
-  const c=[...db.consultas].sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
+  const c=db.consultas.filter(c=>c.data<=hojeISO()).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
   redesenha($('#ultima-consulta'), c? cardConsulta(c)
     : `<div class="vazio"><div class="ilustra">${ico('caderno')}</div><p>O histórico começa na primeira anotação.</p>
        <button class="btn claro" onclick="abrirConsulta()">Registrar uma consulta</button></div>`);
@@ -930,12 +974,13 @@ function desenhaFiltros(){
 }
 function cardConsulta(c){
   const [,nome,cor]=espInfo(c.especialidade);
+  const futura = c.data>hojeISO();
   return `<button class="card link" onclick="abrirConsulta('${c.id}')">
     <div class="linha-topo">
       <div class="bolinha" style="background:${tinta(cor)};color:${cor}">${ico(nome)}</div>
       <div style="flex:1">
         <h3>${esc(c.especialidade)}${c.medico? ' · '+esc(c.medico):''}</h3>
-        <div class="sub">${dataBR(c.data)}${c.autor? ' · anotou '+esc(c.autor):''}</div>
+        <div class="sub">${dataBR(c.data)}${futura? ' · '+quandoTexto(c.data):''}${c.autor? ' · '+(futura?'marcou ':'anotou ')+esc(c.autor):''}</div>
       </div>
     </div>
     ${c.motivo? `<div class="corpo"><strong>Por quê:</strong> ${esc(c.motivo)}</div>`:''}
@@ -979,13 +1024,74 @@ function desenhaRemedios(){
 }
 
 /* ---------- agenda ---------- */
+let agendaModo='lista', agendaMes=new Date(hojeISO()+'T12:00'), diaSelecionado=null;
+
+function alternarAgenda(modo){
+  agendaModo = modo;
+  $('#lista-agenda').hidden = modo!=='lista';
+  $('#vista-calendario').hidden = modo!=='calendario';
+  desenhar();
+}
+function desenhaAlternaAgenda(){
+  $('#agenda-alterna').innerHTML = `<div class="segmentado">
+    <button type="button" aria-pressed="${agendaModo==='lista'}" onclick="alternarAgenda('lista')">${ico('lista','ic mini')}Lista</button>
+    <button type="button" aria-pressed="${agendaModo==='calendario'}" onclick="alternarAgenda('calendario')">${ico('calendario','ic mini')}Calendário</button>
+  </div>`;
+}
 function desenhaAgenda(){
-  const fut=eventosFuturos(), pas=db.eventos.filter(e=>e.data<hojeISO()).sort((a,b)=>b.data.localeCompare(a.data));
+  desenhaAlternaAgenda();
+  if(agendaModo==='calendario'){ desenhaCalendario(); return; }
+  const fut=itensFuturos(), pas=db.eventos.filter(e=>e.data<hojeISO()).sort((a,b)=>b.data.localeCompare(a.data));
   redesenha($('#lista-agenda'),
-    (fut.length? fut.map(cardEvento).join('')
+    (fut.length? fut.map(i=>i.html).join('')
       : `<div class="vazio"><div class="ilustra">${ico('calendario')}</div><p>Agenda livre.</p>
          <button class="btn claro" onclick="abrirEvento()">Marcar compromisso</button></div>`)
     + (pas.length? `<div class="bloco"><div class="bloco-cab"><h2>Já passou</h2></div>${pas.slice(0,10).map(cardEvento).join('')}</div>`:''));
+}
+
+/* ---------- calendário ---------- */
+function mesAnterior(){ agendaMes=new Date(agendaMes.getFullYear(),agendaMes.getMonth()-1,1); desenhaCalendario(); }
+function mesSeguinte(){ agendaMes=new Date(agendaMes.getFullYear(),agendaMes.getMonth()+1,1); desenhaCalendario(); }
+function selecionarDia(iso){ diaSelecionado=iso; desenhaCalendario(); }
+
+/* Agrupa eventos + TODAS as consultas (passadas e futuras) por data, pra
+   marcar o pontinho no dia certo do mês — diferente de itensFuturos(),
+   que só olha pra frente. */
+function itensPorData(){
+  const mapa = {};
+  const add = (data,html,cor)=>{ if(!data) return; (mapa[data]=mapa[data]||[]).push({html,cor}); };
+  db.eventos.forEach(e=>add(e.data, cardEvento(e), espInfo(e.tipo)[2]));
+  db.consultas.forEach(c=>add(c.data, cardConsulta(c), espInfo(c.especialidade)[2]));
+  return mapa;
+}
+function desenhaCalendario(){
+  const mapa = itensPorData();
+  const ano=agendaMes.getFullYear(), mes=agendaMes.getMonth();
+  const offset = new Date(ano,mes,1).getDay();
+  const diasNoMes = new Date(ano,mes+1,0).getDate();
+  const hoje = hojeISO();
+
+  $('#cal-cab').innerHTML = `
+    <button type="button" class="cal-nav" onclick="mesAnterior()" aria-label="Mês anterior">${ico('seta-esq','ic mini')}</button>
+    <h3>${agendaMes.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</h3>
+    <button type="button" class="cal-nav" onclick="mesSeguinte()" aria-label="Próximo mês">${ico('seta-dir','ic mini')}</button>`;
+
+  let celulas = '';
+  for(let i=0;i<offset;i++) celulas += `<div class="cal-dia vazio-dia"></div>`;
+  for(let d=1; d<=diasNoMes; d++){
+    const iso = `${ano}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cores = [...new Set((mapa[iso]||[]).map(i=>i.cor))].slice(0,3);
+    celulas += `<button type="button" class="cal-dia ${iso===hoje?'cal-hoje':''} ${iso===diaSelecionado?'cal-selecionado':''}" onclick="selecionarDia('${iso}')">
+      <span>${d}</span><span class="cal-pontos">${cores.map(c=>`<i style="background:${c}"></i>`).join('')}</span>
+    </button>`;
+  }
+  $('#cal-grade').innerHTML = celulas;
+
+  const diaMostrar = diaSelecionado || hoje;
+  const itensDia = mapa[diaMostrar]||[];
+  redesenha($('#cal-dia'), `<h3 style="font-size:15px;margin:0 0 10px">${dataBR(diaMostrar)}${diaMostrar===hoje?' · hoje':''}</h3>` +
+    (itensDia.length? itensDia.map(i=>i.html).join('')
+      : `<div class="vazio"><div class="ilustra">${ico('balao')}</div><p>Nada marcado neste dia.</p></div>`));
 }
 
 function setFiltroMural(f){ filtroMural=f; desenhaFiltrosMural(); desenhaMural(); }
@@ -1274,7 +1380,7 @@ function abrirRemedio(id){
       <button type="button" class="btn claro" style="width:auto;padding:12px 18px" onclick="somarHora()">Incluir</button>
     </div>
     <div class="resumo-horas" id="resumo-horas"></div>
-    <p class="dica">Toque nos horários. Eles aparecem na tela Hoje pra marcar quando der.</p>
+    <p class="dica">Toque nos horários. Eles aparecem na tela Início pra marcar quando der.</p>
     <label for="r-motivo">Para quê</label><input id="r-motivo" value="${esc(r.motivo)}" placeholder="Infecção de ouvido">
     <div class="dupla">
       <div><label for="r-ini">Começou</label><input type="date" id="r-ini" value="${esc(r.inicio)}"></div>
@@ -1346,7 +1452,7 @@ function abrirRecado(id){
     <textarea id="rc-texto" placeholder="O que precisa ficar combinado">${esc(r.texto)}</textarea>
     <label for="rc-data">Data</label><input type="date" id="rc-data" value="${esc(r.data)}">
     <div class="linha-interruptor">
-      <div><label>Marcar como importante</label><div class="dica" style="margin:2px 0 0">Fica fixado no topo do mural e aparece na tela Hoje, no bloco "Não esquecer".</div></div>
+      <div><label>Marcar como importante</label><div class="dica" style="margin:2px 0 0">Fica fixado no topo do mural e aparece na tela Início, no bloco "Não esquecer".</div></div>
       <button type="button" class="interruptor" id="rc-importante" aria-pressed="${r.importante?'true':'false'}" onclick="alternarImportante(this)"></button>
     </div>
     ${blocoAnexos(id)}
@@ -1706,7 +1812,8 @@ Object.assign(window, {
   exportar, copiarResumo, sairDaConta, fecharFolha,
   abrirRecado, salvarRecado, escolherEtiqueta, alternarImportante, setFiltroMural,
   enviarAnexo, apagarAnexo, verFoto, fecharFoto,
-  abrirVacinas, abrirRegistroVacina, salvarVacina
+  abrirVacinas, abrirRegistroVacina, salvarVacina,
+  alternarAgenda, mesAnterior, mesSeguinte, selecionarDia
 });
 </script>
 </body>

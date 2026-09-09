@@ -86,12 +86,45 @@ dentro de um consultório sem sinal.
 
 ### Navegação: Ajustes saiu da barra de abas
 
-A barra de abas tem sempre 5 botões: Hoje, Consultas, Remédios, Agenda, Mural. Ajustes não é mais uma aba —
+A barra de abas tem sempre 5 botões: **Início** (rótulo visível; id interno continua `hoje` —
+`data-tela="hoje"`, `#tela-hoje`, `ir('hoje')` — só o texto do botão mudou, não vale a pena arriscar um
+rename em cascata por um rótulo), Consultas, Remédios, Agenda, Mural. Ajustes não é mais uma aba —
 `tela-ajustes` continua existindo como `<section>`, só não tem botão correspondente em `#abas`. Ela é
 alcançada por um botão redondo (classe `.eu.avatar-topo`, mostrando as iniciais do usuário) que aparece no
 topo de cada uma das 5 telas e chama `ir('ajustes')` diretamente. Esses botões são atualizados centralmente
 dentro de `desenhar()` (`$$('.avatar-topo').forEach(...)`), não em cada tela individualmente — ao adicionar
 uma tela nova, replique o padrão `.topo-tela` (título + botão) em vez de só um `<h1 class="titulo-tela">`.
+
+### Agenda: lista + calendário, unificada com consultas futuras
+
+`consultas` e `eventos` continuam duas coleções separadas (histórico rico vs. compromisso simples), mas a
+Agenda e o bloco "Vem aí" da Início não leem só `eventos` — leem `itensFuturos()`, que junta
+`eventosFuturos()` com `consultasFuturas()` (`db.consultas.filter(c=>c.data>hojeISO())`) num único array
+ordenado por data, renderizando cada item com o card do seu próprio tipo (`cardEvento`/`cardConsulta`). Isso
+existe porque uma consulta cadastrada com data futura (a mãe marcando uma consulta com antecedência, por
+exemplo) é, na prática, um compromisso — e o usuário não deveria precisar cadastrar a mesma coisa duas vezes
+(uma como consulta, outra como evento) só pra ela aparecer na agenda.
+
+O corte entre "futuro" e "passado" é **estritamente depois de hoje** (`c.data>hojeISO()`, não `>=`) de
+propósito: uma consulta datada de hoje é o fluxo normal do app (anotada em tempo real, no consultório — ver
+COMO-USAR.md), então continua contando como já aconteceu. Isso também resolve o inverso: `desenhaUltima()`
+(bloco "Última consulta" da Início) filtra `db.consultas` para `data<=hojeISO()` antes de pegar a mais
+recente — sem esse filtro, uma consulta futura mais distante no tempo "vencia" no sort por string de data e
+aparecia como se já tivesse acontecido, o que é o bug relatado que motivou essa mudança inteira.
+
+`cardConsulta(c)` sabe se está renderizando uma entrada futura (`c.data>hojeISO()`) e troca "anotou {autor}"
+por "marcou {autor}" e adiciona `quandoTexto(c.data)` à linha de data — mesma função que `cardEvento` já
+usava, agora compartilhada — pra não ler como narração de algo que ainda não aconteceu.
+
+A tela Agenda tem um alternador **Lista / Calendário** (`agendaModo`, controlado por `alternarAgenda()`),
+persistente enquanto o app está aberto (variável de módulo, mesmo padrão de `filtroEsp`/`filtroMural`). O
+modo lista é a `itensFuturos()` de cima + os eventos passados (só eventos — consultas passadas já têm seu
+próprio histórico completo em Consultas, não faz sentido duplicar ali). O modo calendário
+(`desenhaCalendario()`) é uma grade de mês construída na mão (sem lib de datas): `itensPorData()` agrupa
+eventos **e** consultas (passadas e futuras, diferente de `itensFuturos()`) por data pra decidir em que dia
+cada pontinho colorido aparece; tocar num dia (`selecionarDia()`) redesenha só o painel de baixo com os
+itens daquele dia, sem recarregar a grade inteira. `agendaMes` guarda o mês visível como `Date`;
+`mesAnterior()`/`mesSeguinte()` andam um mês pra cada lado.
 
 ### Mural de recados
 

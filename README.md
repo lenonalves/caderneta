@@ -14,7 +14,7 @@ Os dois celulares veem a mesma coisa, ao vivo. Funciona offline e instala como a
 | `firestore.rules` | quem pode ler e escrever — **cole no console do Firebase** |
 | `sw.js` | faz funcionar offline |
 | `manifest.json`, `icon-*.png` | o que transforma o site em app instalável |
-| `logo.png`, `logo-branco.png` | a marca, na tela de login e no topo da tela Hoje |
+| `logo.png`, `logo-branco.png` | a marca, na tela de login e no topo da tela Início |
 
 ## 1. Criar o Firebase (uma vez só)
 
@@ -58,6 +58,7 @@ familias/nossa-filha          → perfil
   └ eventos/{id}
   └ doses/{id}
   └ recados/{id}
+  └ vacinas/{id}
   └ anexos/{id}                (fotos, ligadas a um recado ou consulta pelo campo "dono")
 ```
 
@@ -88,6 +89,6 @@ de espaço.
 
 ## Ideias pra próxima versão
 
-- Carteira de vacinas com o calendário nacional pré-cadastrado
 - Curva de crescimento (peso e altura por consulta)
 - Exportar o histórico de uma especialidade em PDF pra levar impresso
+- Terminar o `worker.js` do carteiro (só está documentado em `PUSH.md`, o arquivo em si ainda não existe aqui)

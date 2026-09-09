@@ -38,16 +38,17 @@ Entre em **Ajustes → Este aparelho** e escreva seu nome ("Mamãe", "Papai").
 
 Elas ficam na barrinha de baixo.
 
-**🏠 Hoje** — a tela que você abre no dia a dia. Mostra a carteirinha dela, os
+**🏠 Início** — a tela que você abre no dia a dia. Mostra a carteirinha dela, os
 recados importantes, os remédios que precisam ser dados hoje, o próximo compromisso
-e a última consulta.
+e a última consulta (já feita — os agendamentos futuros aparecem em "Vem aí" e na Agenda).
 
 **🩺 Consultas** — o histórico completo. Dá pra filtrar por especialidade,
 então quando o pediatra perguntar "o que o otorrino disse?", está tudo ali.
 
 **💊 Remédios** — o que ela está tomando agora e o que já tomou antes.
 
-**📅 Agenda** — o que está marcado.
+**📅 Agenda** — o que está marcado, incluindo as consultas com data futura (não
+precisa anotar duas vezes). Dá pra ver em lista ou em calendário, como preferir.
 
 **📌 Mural** — recados e avisos que os dois precisam saber: reunião da escola,
 apresentação do balé, o que a médica disse por telefone.
@@ -58,7 +59,7 @@ configurações.
 
 ---
 
-## As cinco coisas que você mais vai fazer
+## As seis coisas que você mais vai fazer
 
 ### 1. Anotar uma consulta
 
@@ -80,7 +81,7 @@ rolo do celular.
 
 ### 2. Marcar que deu o remédio
 
-Na tela **Hoje**, cada horário tem uma bolinha do lado. Toque nela.
+Na tela **Início**, cada horário tem uma bolinha do lado. Toque nela.
 
 Ela fica verde e mostra quem deu. Isso acaba com o "você já deu o das 8?".
 
@@ -92,7 +93,7 @@ Aba **Mural** → **+ laranja**. Escreva o que precisa ficar combinado e escolha
 uma etiqueta: Balé, Escola, Saúde ou Outro.
 
 Se for algo que não pode esquecer, ligue o interruptor **Marcar como importante** —
-o recado fica fixado no topo do mural e também aparece bem visível na tela Hoje.
+o recado fica fixado no topo do mural e também aparece bem visível na tela Início.
 
 ### 4. Mostrar tudo pro médico
 
@@ -108,10 +109,23 @@ três últimas consultas. Dá pra colar no WhatsApp ou só mostrar na tela.
 Aba **Remédios** → botão **+**.
 
 Coloque os horários separados por vírgula: `08:00, 20:00`.
-Eles passam a aparecer na tela Hoje todo dia.
+Eles passam a aparecer na tela Início todo dia.
 
 Quando o tratamento acabar, edite o remédio e preencha o campo **Termina**.
 Ele sai da lista de agora e vai pro histórico, sem sumir.
+
+### 6. Marcar uma vacina que ela tomou
+
+**Ajustes → Carteira de vacinas.**
+
+Já vem com o calendário nacional pronto, mostrando o que está em dia, atrasado
+ou ainda por vir. Toque na dose que ela tomou, preencha a data e onde foi.
+
+Se for uma vacina fora da lista (de viagem, por exemplo), toque em **Outra
+vacina** no fim da tela.
+
+> É uma referência — sempre confira com a caderneta física e o pediatra.
+> Atraso e orientação médica mudam a data certa de cada criança.
 
 ---
 
@@ -126,6 +140,11 @@ Aparece uma faixa amarela avisando, e assim que voltar o sinal ele sobe sozinho.
 Você não precisa fazer nada.
 
 **Nada é perdido quando se apaga um remédio antigo.** Ele fica em "Já usou".
+
+**Consulta marcada com data futura já vira compromisso.** Se você anotar uma
+consulta com a data lá na frente (marcou mas ainda não foi), ela aparece
+sozinha em "Vem aí" e na Agenda — não precisa cadastrar de novo como
+compromisso. Só some de "Última consulta" até o dia chegar.
 
 **Fotos só depois de salvar.** Num recado ou consulta novo, salve primeiro — a
 opção de anexar foto aparece depois, ao reabrir o registro já salvo.
