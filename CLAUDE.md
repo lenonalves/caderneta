@@ -155,12 +155,23 @@ existem por causa disso: datas reais de vacinação variam por atraso, doença, 
 
 ### Sistema visual (cores, ícones, marca)
 
-Os tokens de cor ficam em `:root` no `<style>`. `--lavanda` e `--tinta2` foram calibrados para passar
-WCAG AA (contraste ≥4.5:1) em todo uso real como texto ou texto-sobre-fundo — foram medidos com a fórmula de
-luminância relativa do WCAG, não escolhidos de olho. Ao trocar qualquer cor usada como texto ou como fundo
-por trás de texto, meça o contraste antes de assumir que "parece dar" — tons pastel bonitos no editor
-frequentemente falham em contraste sob luz de sol ou pra quem tem baixa visão, o público real deste app
-(cuidadores, às vezes avós).
+Os tokens de cor ficam em `:root` no `<style>`. `--lavanda`, `--tinta2` e `--rosa` foram calibrados para
+passar WCAG AA (contraste ≥4.5:1) em todo uso real como texto ou texto-sobre-fundo — foram medidos com a
+fórmula de luminância relativa do WCAG, não escolhidos de olho (`--rosa:#C93468` dá 5.03:1 com texto branco
+em cima; tons de rosa mais claros/vivos que isso, testados durante a repaginada "tema princesa", ficavam
+todos abaixo de 3:1). Ao trocar qualquer cor usada como texto ou como fundo por trás de texto, meça o
+contraste antes de assumir que "parece dar" — tons pastel bonitos no editor frequentemente falham em
+contraste sob luz de sol ou pra quem tem baixa visão, o público real deste app (cuidadores, às vezes avós).
+`--rosa`/`--rosa-clara`/`--rosa-sombra` são um acento *secundário* (estado selecionado de filtro/chip,
+pílula da aba ativa, brilho da carteirinha) — `--lavanda` continua sendo a cor primária de ação (botões,
+links "ver tudo"). A ideia é rosa como tempero, não substituição.
+
+`--rebote:cubic-bezier(.34,1.56,.64,1)` é a curva de "soltar o toque" usada nos elementos interativos
+(cards, filtros, botões, chips) — o aperto (`:active`) continua rápido e sem exagero (~0.07-0.09s, `ease-out`,
+sem overshoot, pra não pesar em ações frequentes), só a volta ao estado normal usa essa curva com leve
+"quique" (~0.22-0.34s conforme o elemento). Ao adicionar um novo elemento tocável com feedback de escala,
+siga esse padrão — duas declarações de transição, uma no seletor base (com `--rebote`) e outra em `:active`
+que sobrescreve `transition-duration`/`transition-timing-function` pra algo mais seco.
 
 **Armadilha de escopo já corrigida uma vez, não reintroduzir**: existe `.eu{...}` (estilo base do botão-avatar
 redondo, fundo `--lavanda` sólido) e `.hero .eu{...}` (variante translúcida, só para quando o botão está
